@@ -4,7 +4,7 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ./web-app/static:/app/static
+      - ./static:/app/static 
     depends_on:
       - mongodb
 

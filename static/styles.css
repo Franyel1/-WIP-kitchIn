@@ -1,0 +1,274 @@
+* {
+    margin: 0;
+    padding: 0;
+    /* border: solid; */
+    font-family: Lexend;
+}
+
+:root {
+    --primary-color: #415a77;
+
+    --background-color: #778da9;
+
+    --text-color1: #e0e1dd;
+
+    --text-color2: #f5f5f5;
+
+    --button-color: #0d1b2a;
+
+    --button-text-color: #edf2f4;
+
+}
+
+#loginSection,
+#regSection {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--primary-color);
+    width: fit-content;
+    height: 400px;
+    padding: 25px;
+    border-radius:  20px;
+    border: none;
+    
+}
+#regSection{
+    height: 560px;
+}
+
+#loginScreen,
+#registerScreen{
+    background-color: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+#loginForm,
+#regForm {
+    display: flex;
+    flex-direction: column;
+}
+
+h1 {
+    text-align: center;
+    color: var(--text-color1);
+    font-weight: 900;
+    align-self: center;
+    margin: 15px;
+    font-size: 35px;
+    width: 100%;
+}
+
+#username,
+#password {
+    font-weight: 700;
+    color: var(--text-color2);
+    margin-bottom: 5px;
+    margin-top: 15px;;
+    font-size: 18px;
+}
+
+#loginForm div {
+    display: flex;
+    flex-direction: column;
+}
+
+.box {
+    border: none;
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 355px;
+
+}
+
+#logButton {
+    padding: 5px;
+    width: 150px;
+    height:40px;
+    color: var(--button-text-color);
+    background-color: var(--button-color);
+    border: none;
+    margin-top: 20px;
+    align-self: center;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+#noAccount {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 27px;
+    font-size: 20px;
+}
+
+#noAccount h5 {
+    color: var(--text-color1);
+    margin-bottom: 5px;
+}
+
+a:link,
+a:visited {
+    color: var(--text-color2);
+}
+
+a:active {
+    color: var(--text-color1);
+}
+
+#homeScreen {
+    display: block;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--primary-color);
+    display: flex;
+    width: 100%;
+    top: 0;
+    height: 10vh;
+    align-items: center;
+    padding-left: 0px;
+}
+
+#logOut,
+#appName {
+    margin-left: 10%;
+    color: var(--button-text-color);
+    font-weight: 1000;
+    font-size: 0.85em;
+}
+
+
+
+#welcome {
+    font-size: 16pt;
+    font-weight: 800;
+    color: var(--secondary-color);
+    text-align: center;
+    padding-top: 25px;
+}
+
+
+
+a,
+a:visited {
+    text-decoration: none;
+}
+
+a:hover,
+a:active {
+    text-decoration: underline;
+}
+
+ 
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+#homeScreen {
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 110px;
+}
+
+
+
+.button{
+    background-color: var(--primary-color); 
+    color: white; 
+    border: none; 
+    padding: 10px 15px; 
+    border-radius: 5px; 
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+#video{
+    margin-top: 30px;
+    border: solid white 2px;
+    background-color: gray;
+    border-radius: 10px;
+}
+
+#recent{
+    margin-top: 30px;
+    padding-top: 30px;
+
+    border-top: var(--text-color1) solid 2px;
+    margin-bottom: 100px;
+
+}
+
+#logout{
+    position: absolute; 
+    right: 5%; 
+    text-decoration: none;
+}
+
+#topBar{
+    position: absolute; 
+    top: 0;
+    height: 70px;
+    width: 100%;
+    background-color: #1a1b26;
+    color: white;
+    font-weight: 900;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#homeScreen h3{
+    font-size: 30px;
+    font-weight: 900;
+    background-color: rgba(255, 255, 255, 0.714);
+    padding: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-radius: 10px;
+}
+
+
+#result {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+    color: #333;
+    max-width: 480px;
+    text-align: center;
+
+  }
+
+#recent ul{
+    padding-top: 10px;
+}
+
+#recent ul li{
+    font-size: 24px;
+    margin: 10px;
+    background-color: rgba(255, 255, 255, 0.099);
+    color: var(--secondary-color)
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Calorie Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+</head>
+
+<body id="loginScreen">
+    <div id="topBar">
+        <h2>Intelligent Calorie Estimator</h2>
+    </div>
+    <div id="loginSection">
+        <h1>Login</h1>
+
+        <form id="loginForm" action="{{ url_for('login') }}" method="POST">
+            <div>
+                <div id="username">Username:</div>
+                <input class="box" type="text" name="username" value="" required>
+            </div>
+            <div>
+                <div id="password">Password:</div>
+                <input class="box" type="password" name="password" value="" required>
+
+            </div>
+
+            <input id="logButton" type="submit" value="Log in">
+        </form>
+
+        <div id="noAccount">
+            <h5>Don't have an account?</h5>
+            <a href="/register">Register Now!</a>
+        </div>
+    </div>
+</body>
+
+</html>

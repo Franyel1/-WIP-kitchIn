@@ -254,5 +254,4 @@ if __name__ == "__main__":
     FLASK_PORT = os.getenv("FLASK_PORT", "5000")
     FLASK_ENV = os.getenv("FLASK_ENV")
     print(f"FLASK_ENV: {FLASK_ENV}, FLASK_PORT: {FLASK_PORT}")
-
-    app.run(port=int(FLASK_PORT), debug=(FLASK_ENV == "development"))
+    app.run(debug=True, host="0.0.0.0", port=5000)

@@ -1,0 +1,18 @@
+services:
+  web-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./web-app/static:/app/static
+    depends_on:
+      - mongodb
+
+
+  mongodb:
+    image: mongo
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Calorie Tracker</title>
+</head>
+
+<body id="homeScreen" class="center-container">
+  <div id="topBar">
+    <h2>Intelligent Calorie Estimator</h2>
+    <a href="{{ url_for('logout') }}" class="button" id="logout">
+        Logout
+    </a>
+  </div>
+  <h3>Welcome, {{ username }}</h3>
+  <video id="video" width="480" height="360" autoplay></video><br>
+  <button class="button" onclick="capture()">Capture & Check Calories</button><br>
+  <canvas id="canvas" width="480" height="360" style="display:none;"></canvas>
+
+  <div id="result"></div>
+
+  <div id="recent">
+
+    <h3>Recent Calorie Logs</h3>
+      <ul>
+    {% for log in logs %}
+      <li>{{ log.date | pretty_date }}: <b>{{ log.calories }}</b> total calories</li>
+    {% else %}
+      <li>No scans yet.</li>
+    {% endfor %}
+      </ul>
+  </div>
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const result = document.getElementById('result');
+    const context = canvas.getContext('2d');
+  
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => { video.srcObject = stream; })
+      .catch(err => alert("Webcam access denied."));
+  
+    function capture() {
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob(async function(blob) {
+        const formData = new FormData();
+        formData.append('file', blob, 'snapshot.jpg');
+        formData.append('prompt', 'this is food please give just number of calories');
+  
+        result.innerText = "Analyzing...";
+        result.style.backgroundColor = "#f4f4f4";
+        result.style.color = "#333";
+        result.style.padding = '15px 20px'
+  
+        const res = await fetch('/capture', {
+          method: 'POST',
+          body: formData
+        });
+  
+        const data = await res.json();
+  
+        if (data.calories) {
+          result.innerText = `Estimated Calories: ${data.calories}`;
+          result.style.backgroundColor = "#e8f5e9";  
+          result.style.color = "#2e7d32";
+        } else {
+          result.innerText = `Error: ${data.error || 'Unknown error'}`;
+          result.style.backgroundColor = "#ffebee";
+          result.style.color = "#c62828";
+        }
+      }, 'image/jpeg');
+    }
+  </script>
+</body>
+
+</html>

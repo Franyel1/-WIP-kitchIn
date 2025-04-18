@@ -44,7 +44,7 @@
 }
 
 #loginScreen,
-#registerScreen{
+#registerScreen {
     background-color: var(--background-color);
     display: flex;
     align-items: center;
@@ -129,11 +129,6 @@ a:active {
     color: var(--text-color1);
 }
 
-#homeScreen {
-    display: block;
-    flex-direction: column;
-}
-
 header {
     background-color: var(--primary-color);
     display: flex;
@@ -152,6 +147,9 @@ header {
     font-size: 0.85em;
 }
 
+#logout:hover {
+    background-color: rgba(98, 138, 86, 0.7);
+}
 
 
 #welcome {
@@ -162,16 +160,9 @@ header {
     padding-top: 25px;
 }
 
-
-
 a,
 a:visited {
     text-decoration: none;
-}
-
-a:hover,
-a:active {
-    text-decoration: underline;
 }
 
  
@@ -188,16 +179,16 @@ ul {
 
 #homeScreen {
     background-color: var(--background-color);
-    display: flex;
+    display: block;
     flex-direction: column;
-    align-items: center;
+    align-items: start;
+    justify-content: left;
     min-height: 100vh;
     font-family: Arial, sans-serif;
-    text-align: center;
+    text-align: left;
     padding-top: 110px;
+
 }
-
-
 
 .button{
     background-color: var(--primary-color); 
@@ -247,15 +238,16 @@ ul {
 }
 
 #homeScreen h3{
-    font-size: 30px;
+    font-size: 40px;
     font-weight: 900;
-    background-color: rgba(255, 255, 255, 0.714);
+    /* background-color: var(--primary-color); */
+    color: var(--top-bar-color);
     padding: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     border-radius: 10px;
+    text-decoration:underline;
 }
-
 
 #result {
     margin-top: 20px;
@@ -280,113 +272,270 @@ ul {
     color: var(--secondary-color)
 }
 
-/*/////////////householdpage///////////////////*/
-
-#householdScreen{
+#householdScreen {
     background-color: var(--background-color);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    min-height: 100vh;
     font-family: Arial, sans-serif;
-    text-align: center;
+    text-align: left;
     padding-top: 110px;
 }
 
-#logo{
-    color: var(--logo-color)
-}
-#logo:hover{
-    text-decoration: none;
-    color:var(--logo-color2);
-}
-
-#panels{
+#banner {
+    width: 100%;
     display: flex;
-
-    justify-content: space-between;
     align-items: center;
-
+    justify-content: space-between;
+    padding: 0 50px;
+    padding-right: 80px;
+    box-sizing: border-box;
 }
 
-#grocery,#pantry{
-    width: 400px;
-    background-color: rgba(255, 255, 255, 0.62);
-    height: fit-content;
-    padding: 20px;
-    margin-top: 20px;
-}
-#groceryPanel{
-    margin-right: 40px;
-}
-#pantryPanel{
-    margin-left: 40px;
+#banner button {
+    padding-block:2px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: var(--top-bar-color);
+    font-weight: 900;
+    font-size: 35px;
 }
 
-#pantry>div, #grocery>div{
-    margin-bottom: 10px; 
+#banner button:hover {
+    /* background-color: rgba(255, 255, 255, 0.85);*/
+    background-color: rgba(17, 48, 32, 0.8);
+    transition: 0.3s ease;
+}
+
+#banner button:hover .add {
     color: var(--button-text-color);
-    font-size: 25px;
-    background-color: var(--top-bar-color);
-    padding: 10px;
+    transition: 0.3s ease;
+}
+
+.join {
+    padding: 5px;
+    font-size: x-large;
+    display: block;
+    border-radius: 5px;
+    margin: 10px auto;
+    width: 30%;
+    max-width: 400px;
+    box-sizing: border-box;
+    border: 0px;
+    text-align: center;
+}
+
+.join:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--logo-color);
+    transition: box-shadow 0.3s ease;
+}
+  
+/* default household container style */
+.householdContainer {
+    background-color: rgba(224, 225, 221, 0.8);
+    padding-block: 30px;
+    padding-left: 25px;
+    margin: 20px auto;
+    border-radius: 10px;
+    width: calc(100% - 100px);
+    box-sizing: border-box;
+    cursor: pointer;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.householdContainer .name {
+    color: var(--top-bar-color);
+    font-size: 25px;
+    font-weight: 3000;
+}
+
+.householdContainer .num {
+    color: var(--button-color);
+    margin-top: 5px;
+    font-size: 16px;
+}
+
+
+/* hover over household container */
+.householdContainer:hover {
+    background-color: rgba(17, 48, 32, 0.8);
+    transition: 0.3s ease;
+}
+
+.householdContainer:hover .name,
+.householdContainer:hover .num {
+    color: var(--logo-color);
+    transition: 0.3s ease;
+}
+
+
+/* create household button overlay popup */
+.overlay-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
     justify-content: center;
     align-items: center;
-    position: relative;
-}
-#pantry ul, #grocery ul{ 
-    font-size: 20px;
-}
-#pantry ul li, #grocery ul li{ 
-    margin-top: 10px;
-    padding:18px;
-    line-height: 20px;
-    background-color: rgba(0, 0, 0, 0.02);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: relative;
-}
-#pantry ul li:hover, #grocery ul li:hover{ 
-    cursor:pointer;
-    background-color: rgba(0, 0, 0, 0.08);;
-}
-#item{
-    width: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-#price, #quantity{ 
-    width:50%;
+#home h2 {
+    color: var(--text-color1);
 }
 
-
-#pantryAdd, #groceryAdd, #groceryRemove{
-    line-height: 27px; 
-    text-align: center;
+.popup-box {
     background-color: var(--primary-color);
-    width: 30px;
-    height:30px; 
-    border-radius: 30px;
-    margin-left: 20px;
-    position: absolute;
-    right: 15px; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    height: 400px;
+    padding: 25px;
+    border-radius:  20px;
 
+    /* animation */
+    transform: scale(0.8);
+    animation: fadeInUp 0.5s ease-out forwards;
 }
-#groceryRemove{
-    background-color: var(--red);
+
+.form-container {
+    display: flex;
+    flex-direction: column;
 }
-#pantryAdd:hover, #groceryAdd:hover, #groceryRemove:hover{
-    text-decoration: none;
+
+.form-label {
+    margin-bottom: 10px;
+    font-size: 23px;
+    color: var(--text-color2);
+    text-align: left;
+}
+
+.form-input {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn-submit,
+.btn-close-popup {
+    /* padding: 12px 24px; */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+    padding: 5px;
+    width: 150px;
+    height:40px;
+    color: var(--button-text-color);
+    background-color: var(--button-color);
+    border: none;
+    margin-top: 20px;
+    align-self: center;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    color: var(--text-color1)
+}
+
+.btn-submit {
+    background-color: var(--button-color);
+}
+
+.btn-close-popup {
+    margin-top: 12px;
+    background-color: var(--background-color);
+}
+
+.btn-submit:hover,
+.btn-close-popup:hover {
+    background-color: var(--logo-color);
+}
+
+/* Keyframes for fadeInUp animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Animation for popup */
+.overlay-container.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* color picker */
+
+.color-picker-circle {
+    width:8%;
+    height:0;
+    padding-bottom: 8%;
+    border-radius: 50%;
+    border:2px solid #cfdcec;
+    margin: auto;
+    cursor: pointer;
     background-color: var(--text-color1);
-    color:var(--primary-color);
-    cursor:pointer;
-}
-#groceryRemove:hover{
-    color:var(--red);
-    background-color: var(--text-color1);
+    
 }
 
+.color-picker-button {
+    width: 100%;
+    display: inline;
+    justify-content: space-between;
+    align-items: center;
+    margin:auto;
+    display: inline-flex;
+    flex-direction: row;
+}
 
+/* button colours */
+#button1 {background-color: rgba(234,153,153,0.7);}
+#button2 {background-color: rgba(249,203,156,0.7);}
+#button3 {background-color: rgba(255,217,102,0.7);}
+#button4 {background-color: rgba(182,215,168,0.7);}
+#button5 {background-color: rgba(164,194,244,0.7);}
+#button6 {background-color: rgba(180,167,214,0.7);}
 
+/* color picker button hover */
+.color-picker-circle:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    transition: 0.3s ease;
+}
 
+.color-picker-circle input[type="radio"] {
+    display: none;
+}
 
+.checkmark {
+    display: none;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    pointer-events: none;
+}
 
+.color-picker-circle input[type="radio"]:checked + .checkmark {
+    display: block;
+}
+
+.color-picker-circle input[type="radio"]:checked ~ .checkmark {
+    display: block;
+}

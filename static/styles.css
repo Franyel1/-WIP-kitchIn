@@ -344,10 +344,12 @@ ul {
 }
 #item{
     width: 50%;
+    text-align: center;
 }
 
 #price, #quantity{ 
     width:50%;
+    text-align: center;
 }
 
 

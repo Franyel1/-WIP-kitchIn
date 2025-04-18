@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,18 +7,16 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles.css">
-    <title>Calorie Tracker</title>
+    <title>Add grocery</title>
 </head>
-
-<body id="homeScreen" class="center-container">
-  <div id="topBar">
-    <h2>kitchIn</h2>
-    <a href="{{ url_for('logout') }}" class="button" id="logout">
-        Logout
-    </a>
-  </div>
-  <h3>Welcome, {{ username }}</h3>
-  
+<body>
+    <div id="topBar">
+        <h2>kitchIn</h2>
+        <a href="{{ url_for('logout') }}" class="button" id="logout">
+            Logout
+        </a>
+    </div>
+    
+    
 </body>
-
 </html>

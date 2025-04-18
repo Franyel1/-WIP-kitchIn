@@ -21,6 +21,10 @@
     --top-bar-color: #113020;
 
     --logo-color: #ffae41;
+    --logo-color2: #d48722;
+
+
+    --red: #c1121f;
 }
 
 #loginSection,
@@ -275,3 +279,114 @@ ul {
     background-color: rgba(255, 255, 255, 0.099);
     color: var(--secondary-color)
 }
+
+/*/////////////householdpage///////////////////*/
+
+#householdScreen{
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 110px;
+}
+
+#logo{
+    color: var(--logo-color)
+}
+#logo:hover{
+    text-decoration: none;
+    color:var(--logo-color2);
+}
+
+#panels{
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+#grocery,#pantry{
+    width: 400px;
+    background-color: rgba(255, 255, 255, 0.62);
+    height: fit-content;
+    padding: 20px;
+    margin-top: 20px;
+}
+#groceryPanel{
+    margin-right: 40px;
+}
+#pantryPanel{
+    margin-left: 40px;
+}
+
+#pantry>div, #grocery>div{
+    margin-bottom: 10px; 
+    color: var(--button-text-color);
+    font-size: 25px;
+    background-color: var(--top-bar-color);
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+#pantry ul, #grocery ul{ 
+    font-size: 20px;
+}
+#pantry ul li, #grocery ul li{ 
+    margin-top: 10px;
+    padding:18px;
+    line-height: 20px;
+    background-color: rgba(0, 0, 0, 0.02);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+}
+#pantry ul li:hover, #grocery ul li:hover{ 
+    cursor:pointer;
+    background-color: rgba(0, 0, 0, 0.08);;
+}
+#item{
+    width: 50%;
+}
+
+#price, #quantity{ 
+    width:50%;
+}
+
+
+#pantryAdd, #groceryAdd, #groceryRemove{
+    line-height: 27px; 
+    text-align: center;
+    background-color: var(--primary-color);
+    width: 30px;
+    height:30px; 
+    border-radius: 30px;
+    margin-left: 20px;
+    position: absolute;
+    right: 15px; 
+
+}
+#groceryRemove{
+    background-color: var(--red);
+}
+#pantryAdd:hover, #groceryAdd:hover, #groceryRemove:hover{
+    text-decoration: none;
+    background-color: var(--text-color1);
+    color:var(--primary-color);
+    cursor:pointer;
+}
+#groceryRemove:hover{
+    color:var(--red);
+    background-color: var(--text-color1);
+}
+
+
+
+
+
+

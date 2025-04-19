@@ -15,44 +15,251 @@
         <a href="{{ url_for('logout') }}" class="button" id="logout">
             Logout
         </a>
+        <a href="{{ url_for('requests') }}" class="button" id="requests">
+            Requests
+        </a>
+
     </div>
 
-    <div id="panels">
+    
+
+      <!--<div id="panels">
         <div id="groceryPanel">
-            
-            <div id="grocery">
-                <div><h2>Grocery List </h2> <a href="{{ url_for('addGrocery')}}" id="groceryAdd">+</a> </div> 
-                <ul>
-                    <li><span id="item">item1</span><span id="price">20.00$</span>  <a href="{{ url_for('removeGrocery')}}" id="groceryRemove">-</a> </li>
-                    <li><span id="item">item2</span><span id="price">1$</span></li>
-                    <li><span id="item">item3</span><span id="price">20.00$</span></li>
-                    <li><span id="item">item4</span><span id="price">5.90$</span></li>
-                    <li><span id="item">item5</span><span id="price">20000000.00$</span></li>
-
-                </ul>
+          <div id="grocery">
+            <div>
+              <h2>Grocery List</h2>
+              <a href="#" id="groceryAdd">+</a>
             </div>
+            <ul>
+                <ul>
+                    <li>  
+                      <div id="listBox">
+                        <span id="item">Bread</span>
+                        <span id="price">3.00$</span>
+                        <a href="#" class="groceryEdit"data-id="661f9f19a1c2b3e9d2c12345">✎</a>
+                        <a href="#" id="groceryRemove">-</a>
+                      </div>
+                      <div id="requester">Request by: johnDoe</div>
+                    </li>
+                  
+                    <li>  
+                      <div id="listBox">
+                        <span id="item">Milk</span>
+                        <span id="price">2.50$</span>
+                        <a href="#" class="groceryEdit"data-id="661f9f19a1c2b3e9d2c12345">✎</a>
+                        <a href="#" id="groceryRemove">-</a>
+                      </div>
+                      <div id="requester">Request by: sarahK</div>
+                    </li>
+                  </ul>                  
+            </ul>
+          </div>
         </div>
-
+      
         <div id="pantryPanel">
-            
-            <div id="pantry">
-                <div><h2>Pantry </h2> <a href="{{ url_for('addGrocery')}}" id="groceryAdd">+</a> </div> 
-                <ul>
-                    <li><span id="item">item1</span><span id="quantity">1/3</span>  <a href="{{ url_for('removeGrocery')}}" id="groceryRemove">-</a> </li>
-                    <li><span id="item">item2</span><span id="quantity">10 units</span></li>
-                    <li><span id="item">item3</span><span id="quantity">12 units</span></li>
-                    <li><span id="item">item4</span><span id="quantity">1/2</span></li>
-                    <li><span id="item">item5</span><span id="quantity">3 units</span></li>
-
-                </ul>
+          <div id="pantry">
+            <div>
+              <h2>Pantry</h2>
+              <a href="#" id="groceryAdd">+</a>
             </div>
+            <ul>
+              <li>  
+                <div id="listBox">
+                  <span id="item">Rice</span>
+                  <span id="quantity">5 lbs</span>
+                  <a href="#" class="pantryEdit"data-id="661f9f19a1c2b3e9d2c12345">✎</a>
+                  <a href="#" id="pantryRemove">-</a>
+                </div>
+                <div id="expiry">exp: 11/20/25</div>
+              </li>
+              <li>  
+                <div id="listBox">
+                  <span id="item">Cereal</span>
+                  <span id="quantity">2 boxes</span>
+                </div>
+                <div id="expiry">exp: 06/01/25</div>
+              </li>
+              <li>  
+                <div id="listBox">
+                  <span id="item">Beans</span>
+                  <span id="quantity">3 cans</span>
+                  <a href="#" class="pantryEdit" data-id="661f9f19a1c2b3e9d2c12345">✎</a>
+                  <a href="#" id="pantryRemove">-</a>
+                </div>
+                <div id="expiry">exp: 12/31/25</div>
+              </li>
+            </ul>
+          </div>
         </div>
+      </div>-->
+
+      <div id="householdName">{{household.name}}</div>
+
+      <div id="panels">
+        <!-- Grocery Panel -->
+        <div id="groceryPanel">
+          <div id="grocery">
+            <div>
+              <h2>Grocery List</h2>
+              <a href="{{ url_for('addGrocery') }}" id="groceryAdd">+</a>
+            </div>
+            <ul>
+              {% for item in grocery_list %}
+                <li>
+                  <div id="listBox">
+                    <span id="item">{{ item.name }}</span>
+                    <span id="price">{{ item.price }}$</span>
+                    {% if item.requester_id == current_user_id %}
+                      <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
+                      <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
+                    {% endif %}
+                  </div>
+                  <div id="requester">Request by: {{ item.requester_username or 'unknown' }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      
+        <!-- Pantry Panel -->
+        <div id="pantryPanel">
+          <div id="pantry">
+            <div>
+              <h2>Pantry</h2>
+              <a href="{{ url_for('addGrocery') }}" id="groceryAdd">+</a>
+            </div>
+            <ul>
+              {% for item in pantry %}
+                <li>
+                  <div id="listBox">
+                    <span id="item">{{ item.name }}</span>
+                    <span id="quantity">{{ item.quantity }}</span>
+                    {% if item.owner_id == current_user_id %}
+                      <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
+                      <a href="{{ url_for('removePantry', id=item._id) }}" id="pantryRemove">-</a>
+                    {% endif %}
+                  </div>
+                  <div id="expiry">exp: {{ item.expiration }}</div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>      
+
+    <div id="back">
+        <div id="pantryEditBox">
+            <h3>Edit Pantry Item</h3>
+            <form id="editPantryForm" method="POST" action="/update-pantry">
+                <div id="questions2">
+                    <input type="hidden" name="id" id="pantryItemId">
+                  
+                    <label for="editName">Name:</label>
+                    <input type="text" name="name" id="editName"><br><br>
+                  
+                    <label for="editQuantity">Quantity:</label>
+                    <input type="text" name="quantity" id="editQuantity"><br><br>
+                  
+                    <label for="editExpiry">Expiration Date:</label>
+                    <input type="text" name="expiration" id="editExpiry"><br>
+                  </div>
+                <button class="button"type="submit">Save</button>
+                <button class="button"type="button"id="cancelButton" onclick="closePantryEditBox()">Cancel</button>
+            </form>         
+        </div>
+        <div id="groceryEditBox">
+            <h3>Edit Grocery Item</h3>
+            <form id="editGroceryForm" method="POST" action="/update-grocery">
+                <div id="questions">
+                    <input type="hidden" name="id" id="groceryItemId">
+                  
+                    <label for="groceryEditName">Name:</label>
+                    <input type="text" name="name" id="groceryEditName"><br><br>
+                  
+                    <label for="groceryEditPrice">Price:</label>
+                    <input type="text" name="price" id="groceryEditPrice"><br><br>
+                
+                </div>
+                <button class="button" type="submit">Save</button>
+                <button class="button" id="cancelButton" type="button" onclick="closeGroceryEditBox()">Cancel</button>
+            </form>
+        </div>
+    </div>
+      
+      
+      
+<script>
+// ============================
+// Grocery Edit Logic
+// ============================
+let currentGroceryId = null;
+
+function closeGroceryEditBox() {
+    document.getElementById("groceryEditBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
+
+let groceryEdits = document.querySelectorAll('.groceryEdit');
+
+for (let i = 0; i < groceryEdits.length; i++) {
+  groceryEdits[i].addEventListener('click', function (e) {
+    e.preventDefault();
+    currentGroceryId = this.dataset.id;
+
+    const listItem = this.closest('li');
+
+    const name = listItem.querySelector('#item')?.textContent || '';
+    const price = listItem.querySelector('#price')?.textContent.replace('$', '') || '';
+    const requesterText = listItem.querySelector('#requester')?.textContent || '';
+    const requester = requesterText.replace('Request by: ', '').trim();
+
+    document.getElementById("groceryItemId").value = currentGroceryId;
+    document.getElementById("groceryEditName").value = name;
+    document.getElementById("groceryEditPrice").value = price;
+
+    document.getElementById("groceryEditBox").style.display = "flex";
+    document.getElementById("back").style.display = "flex";
+  });
+}
 
 
-    </div> 
+// ============================
+// Pantry Edit Logic
+// ============================
+let currentPantryId = null;
+
+function closePantryEditBox() {
+  document.getElementById("pantryEditBox").style.display = "none";
+  document.getElementById("back").style.display = "none";
+}
+
+let pantryEdits = document.querySelectorAll('.pantryEdit');
+
+for (let i = 0; i < pantryEdits.length; i++) {
+  pantryEdits[i].addEventListener('click', function (e) {
+    e.preventDefault();
+    currentPantryId = this.dataset.id;
+
+    const listItem = this.closest('li');
+
+    const name = listItem.querySelector('#item')?.textContent || '';
+    const quantity = listItem.querySelector('#quantity')?.textContent || '';
+    const expiryText = listItem.querySelector('#expiry')?.textContent || '';
+    const expiry = expiryText.replace('exp: ', '').trim();
+
+    document.getElementById("pantryItemId").value = currentPantryId;
+    document.getElementById("editName").value = name;
+    document.getElementById("editQuantity").value = quantity;
+    document.getElementById("editExpiry").value = expiry;
+
+    document.getElementById("pantryEditBox").style.display = "flex";
+    document.getElementById("back").style.display = "flex";
+  });
+}
 
 
-    
-    
+
+</script>
+  
 </body>
 </html>

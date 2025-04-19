@@ -21,87 +21,14 @@
 
     </div>
 
-    
-
-      <!--<div id="panels">
-        <div id="groceryPanel">
-          <div id="grocery">
-            <div>
-              <h2>Grocery List</h2>
-              <a href="#" id="groceryAdd">+</a>
-            </div>
-            <ul>
-                <ul>
-                    <li>  
-                      <div id="listBox">
-                        <span id="item">Bread</span>
-                        <span id="price">3.00$</span>
-                        <a href="#" class="groceryEdit"data-id="661f9f19a1c2b3e9d2c12345">✎</a>
-                        <a href="#" id="groceryRemove">-</a>
-                      </div>
-                      <div id="requester">Request by: johnDoe</div>
-                    </li>
-                  
-                    <li>  
-                      <div id="listBox">
-                        <span id="item">Milk</span>
-                        <span id="price">2.50$</span>
-                        <a href="#" class="groceryEdit"data-id="661f9f19a1c2b3e9d2c12345">✎</a>
-                        <a href="#" id="groceryRemove">-</a>
-                      </div>
-                      <div id="requester">Request by: sarahK</div>
-                    </li>
-                  </ul>                  
-            </ul>
-          </div>
-        </div>
-      
-        <div id="pantryPanel">
-          <div id="pantry">
-            <div>
-              <h2>Pantry</h2>
-              <a href="#" id="groceryAdd">+</a>
-            </div>
-            <ul>
-              <li>  
-                <div id="listBox">
-                  <span id="item">Rice</span>
-                  <span id="quantity">5 lbs</span>
-                  <a href="#" class="pantryEdit"data-id="661f9f19a1c2b3e9d2c12345">✎</a>
-                  <a href="#" id="pantryRemove">-</a>
-                </div>
-                <div id="expiry">exp: 11/20/25</div>
-              </li>
-              <li>  
-                <div id="listBox">
-                  <span id="item">Cereal</span>
-                  <span id="quantity">2 boxes</span>
-                </div>
-                <div id="expiry">exp: 06/01/25</div>
-              </li>
-              <li>  
-                <div id="listBox">
-                  <span id="item">Beans</span>
-                  <span id="quantity">3 cans</span>
-                  <a href="#" class="pantryEdit" data-id="661f9f19a1c2b3e9d2c12345">✎</a>
-                  <a href="#" id="pantryRemove">-</a>
-                </div>
-                <div id="expiry">exp: 12/31/25</div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>-->
-
       <div id="householdName">{{household.name}}</div>
 
       <div id="panels">
-        <!-- Grocery Panel -->
         <div id="groceryPanel">
           <div id="grocery">
             <div>
               <h2>Grocery List</h2>
-              <a href="{{ url_for('addGrocery') }}" id="groceryAdd">+</a>
+              <a href="#" id="groceryAdd" onclick="openAddGrocery()">+</a>
             </div>
             <ul>
               {% for item in grocery_list %}
@@ -121,12 +48,11 @@
           </div>
         </div>
       
-        <!-- Pantry Panel -->
         <div id="pantryPanel">
           <div id="pantry">
             <div>
               <h2>Pantry</h2>
-              <a href="{{ url_for('addGrocery') }}" id="groceryAdd">+</a>
+              <a href="#" id="pantryAdd" onclick="openAddPantry()">+</a>
             </div>
             <ul>
               {% for item in pantry %}
@@ -184,6 +110,40 @@
                 <button class="button" id="cancelButton" type="button" onclick="closeGroceryEditBox()">Cancel</button>
             </form>
         </div>
+
+        <!--TODO: fix the css for the add part-->
+        <div id="groceryAddBox" style="display:none;">
+            <h3>Add Grocery Item</h3>
+            <form id="addGroceryForm" method="POST" action="/add-grocery">
+              <div id="questions">
+                <label for="addGroceryName">Name:</label>
+                <input type="text" name="name" id="addGroceryName"><br><br>
+          
+                <label for="addGroceryPrice">Price:</label>
+                <input type="text" name="price" id="addGroceryPrice"><br><br>
+              </div>
+              <button class="button" type="submit">Add</button>
+              <button class="button" type="button" onclick="closeAddGrocery()">Cancel</button>
+            </form>
+          </div>
+          <div id="pantryAddBox" style="display:none;">
+            <h3>Add Pantry Item</h3>
+            <form id="addPantryForm" method="POST" action="/add-pantry">
+              <div id="questions2">
+                <label for="addPantryName">Name:</label>
+                <input type="text" name="name" id="addPantryName"><br><br>
+          
+                <label for="addPantryQuantity">Quantity:</label>
+                <input type="text" name="quantity" id="addPantryQuantity"><br><br>
+          
+                <label for="addPantryExpiry">Expiration Date:</label>
+                <input type="text" name="expiration" id="addPantryExpiry"><br>
+              </div>
+              <button class="button" type="submit">Add</button>
+              <button class="button" type="button" onclick="closeAddPantry()">Cancel</button>
+            </form>
+          </div>
+          
     </div>
       
       
@@ -202,24 +162,24 @@ function closeGroceryEditBox() {
 let groceryEdits = document.querySelectorAll('.groceryEdit');
 
 for (let i = 0; i < groceryEdits.length; i++) {
-  groceryEdits[i].addEventListener('click', function (e) {
-    e.preventDefault();
-    currentGroceryId = this.dataset.id;
+    groceryEdits[i].addEventListener('click', function (e) {
+        e.preventDefault();
+        currentGroceryId = this.dataset.id;
 
-    const listItem = this.closest('li');
+        const listItem = this.closest('li');
 
-    const name = listItem.querySelector('#item')?.textContent || '';
-    const price = listItem.querySelector('#price')?.textContent.replace('$', '') || '';
-    const requesterText = listItem.querySelector('#requester')?.textContent || '';
-    const requester = requesterText.replace('Request by: ', '').trim();
+        const name = listItem.querySelector('#item')?.textContent || '';
+        const price = listItem.querySelector('#price')?.textContent.replace('$', '') || '';
+        const requesterText = listItem.querySelector('#requester')?.textContent || '';
+        const requester = requesterText.replace('Request by: ', '').trim();
 
-    document.getElementById("groceryItemId").value = currentGroceryId;
-    document.getElementById("groceryEditName").value = name;
-    document.getElementById("groceryEditPrice").value = price;
+        document.getElementById("groceryItemId").value = currentGroceryId;
+        document.getElementById("groceryEditName").value = name;
+        document.getElementById("groceryEditPrice").value = price;
 
-    document.getElementById("groceryEditBox").style.display = "flex";
-    document.getElementById("back").style.display = "flex";
-  });
+        document.getElementById("groceryEditBox").style.display = "flex";
+        document.getElementById("back").style.display = "flex";
+    });
 }
 
 
@@ -229,34 +189,52 @@ for (let i = 0; i < groceryEdits.length; i++) {
 let currentPantryId = null;
 
 function closePantryEditBox() {
-  document.getElementById("pantryEditBox").style.display = "none";
-  document.getElementById("back").style.display = "none";
+    document.getElementById("pantryEditBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
 }
 
 let pantryEdits = document.querySelectorAll('.pantryEdit');
 
 for (let i = 0; i < pantryEdits.length; i++) {
-  pantryEdits[i].addEventListener('click', function (e) {
-    e.preventDefault();
-    currentPantryId = this.dataset.id;
+    pantryEdits[i].addEventListener('click', function (e) {
+        e.preventDefault();
+        currentPantryId = this.dataset.id;
 
-    const listItem = this.closest('li');
+        const listItem = this.closest('li');
 
-    const name = listItem.querySelector('#item')?.textContent || '';
-    const quantity = listItem.querySelector('#quantity')?.textContent || '';
-    const expiryText = listItem.querySelector('#expiry')?.textContent || '';
-    const expiry = expiryText.replace('exp: ', '').trim();
+        const name = listItem.querySelector('#item')?.textContent || '';
+        const quantity = listItem.querySelector('#quantity')?.textContent || '';
+        const expiryText = listItem.querySelector('#expiry')?.textContent || '';
+        const expiry = expiryText.replace('exp: ', '').trim();
 
-    document.getElementById("pantryItemId").value = currentPantryId;
-    document.getElementById("editName").value = name;
-    document.getElementById("editQuantity").value = quantity;
-    document.getElementById("editExpiry").value = expiry;
+        document.getElementById("pantryItemId").value = currentPantryId;
+        document.getElementById("editName").value = name;
+        document.getElementById("editQuantity").value = quantity;
+        document.getElementById("editExpiry").value = expiry;
 
-    document.getElementById("pantryEditBox").style.display = "flex";
-    document.getElementById("back").style.display = "flex";
-  });
+        document.getElementById("pantryEditBox").style.display = "flex";
+        document.getElementById("back").style.display = "flex";
+    });
+
 }
 
+function openAddGrocery() {
+    document.getElementById("back").style.display = "flex";
+    document.getElementById("groceryAddBox").style.display = "flex";
+}
+function closeAddGrocery() {
+    document.getElementById("groceryAddBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
+
+function openAddPantry() {
+    document.getElementById("back").style.display = "flex";
+    document.getElementById("pantryAddBox").style.display = "flex";
+}
+function closeAddPantry() {
+    document.getElementById("pantryAddBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
 
 
 </script>

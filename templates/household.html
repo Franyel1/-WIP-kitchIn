@@ -32,27 +32,24 @@
             </div>
             <ul>
               {% for item in grocery_list %}
-              <li class="{% if item.bought %}bought{% endif %}">
-                    <div id="listBox" class="{% if item.bought %}crossedOut{% endif %}">
-                        <label class="customCheckboxWrapper">
-                          <input type="checkbox" class="boughtCheckbox" data-id="{{ item._id }}" {% if item.bought %}checked{% endif %}>
-                          <span class="customCheckbox"></span>
-                        </label>
-                        <span id="item">{{ item.name }}</span>
-                        <span id="price">{{ item.price }}$</span>
-                        {% if item.requester_id == current_user_id %}
-                            <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
-                            <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
-                        {% endif %}
-                    </div>
-                    <div id="requester">
-                        Requested by {{ item.requester_username or 'unknown' }}
-                        {% if item.bought and item.buyer_username %}
-                        &nbsp;·&nbsp;Bought by {{ item.buyer_username }}
-                        <a href="#" class="reorderButton" data-id="{{ item._id }}">+</a>
-                        {% endif %}
-                    </div>
-                </li>
+              <li class="groceryItem"
+data-id="{{ item._id }}"
+                data-name="{{ item.name }}"
+                data-price="{{ item.price }}"
+                data-requester-id="{{ item.requester_id }}"
+                data-requester-name="{{ item.requester_username or 'unknown' }}">
+                  <div id="listBox">
+                    <span id="item">{{ item.name }}</span>
+                    <span id="price">{{ item.price }}$</span>
+                    {% if item.requester_id == current_user_id %}
+                        <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
+                        <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
+                    {% endif %}
+                  </div>
+                  <div id="requester">
+                      Requested by {{ item.requester_username or 'unknown' }}
+                  </div>
+              </li>
               {% endfor %}
             </ul>
           </div>
@@ -66,24 +63,80 @@
             </div>
             <ul>
               {% for item in pantry %}
-                <li>
-                  <div id="listBox">
-                    <span id="item">{{ item.name }}</span>
-                    <span id="quantity">{{ item.quantity }}</span>
-                    {% if item.owner_id == current_user_id %}
-                      <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
-                      <a href="{{ url_for('removePantry', id=item._id) }}" id="pantryRemove">-</a>
+              <li>
+                {% if item.buyer_username %}
+                  <div class="pantryBuyer">
+                    Bought by: {{ item.buyer_username }}
+                    {% if item.owner_id == current_user_id and item.request_count > 0 %}
+                      <span class="itemRequestBadge">📥 {{ item.request_count }}</span>
                     {% endif %}
                   </div>
-                  <div id="expiry">exp: {{ item.expiration }}</div>
-                </li>
-              {% endfor %}
+                  
+                {% endif %}
+                <div id="listBox">
+                  <span id="item">{{ item.name }}</span>
+                  <span id="quantity">{{ item.quantity }}</span>
+                  {% if item.owner_id == current_user_id %}
+                    <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
+                    <a href="{{ url_for('removePantry', id=item._id) }}" id="pantryRemove">-</a>
+                  {% endif %}
+                </div>
+                <div id="expiry">exp: {{ item.expiration }}</div>
+                {% if item.owner_id != current_user_id %}
+                  <a href="#" class="pantryRequest" data-id="{{ item._id }}" data-name="{{ item.name }}">✉</a>
+                {% endif %}
+              </li>
+            {% endfor %}
             </ul>
           </div>
         </div>
       </div>      
 
     <div id="back">
+        <div id="pantryRequestBox" style="display:none;">
+          <h3>Request From Pantry</h3>
+          <form id="requestPantryForm">
+            <input type="hidden" id="requestPantryId">
+            <p id="requestPromptText"></p>
+            <div>
+              <label>Amount:</label>
+              <input type="text" name="amount" class="reqBut"><br>
+            </div>
+            
+            <div>
+              <label>Note (optional):</label>
+              <input type="text" name="note"><br><br>
+            </div>
+            
+            <div>
+              <button class="button reqBut"id="acceptButton" type="submit">Request</button>
+              <button class="button reqBut" type="button" id="cancelButton"onclick="closeRequestBox()">Cancel</button>
+            </div>
+            
+          </form>
+      </div>
+        <div id="groceryConfirmBox" style="display:none;">
+          <h3>Confirm Purchase</h3>
+          <form id="confirmBuyForm">
+            <input type="hidden" id="confirmGroceryId">
+            <p id="confirmText"></p>
+            <div>
+              <label>Quantity (optional):</label>
+              <input type="text" id="confirmQuantity"><br>
+            </div>
+              
+            <div>
+              <label>Expiration Date (optional):</label>
+              <input type="text" id="confirmExpiry"><br><br>
+            </div>
+            
+            <div>
+              <button type="submit" class="button reqBut"id="acceptButton">Yes, I bought it</button>
+              <button type="button" class="button reqBut" id="cancelButton"onclick="closeConfirmBox()">Cancel</button>
+            </div>
+              
+          </form>
+        </div>
         <div id="pantryEditBox">
             <h3>Edit Pantry Item</h3>
             <form id="editPantryForm" method="POST" action="/update-pantry">
@@ -133,7 +186,7 @@
                 <input type="text" name="price" id="addGroceryPrice"><br><br>
               </div>
               <button class="button" type="submit">Add</button>
-              <button class="button" type="button" onclick="closeAddGrocery()">Cancel</button>
+              <button class="button" type="button"id="cancelButton"  onclick="closeAddGrocery()">Cancel</button>
             </form>
           </div>
           <div id="pantryAddBox" style="display:none;">
@@ -150,7 +203,7 @@
                 <input type="text" name="expiration" id="addPantryExpiry"><br>
               </div>
               <button class="button" type="submit">Add</button>
-              <button class="button" type="button" onclick="closeAddPantry()">Cancel</button>
+              <button class="button" type="button"id="cancelButton"  onclick="closeAddPantry()">Cancel</button>
             </form>
           </div>
           
@@ -163,6 +216,7 @@
 // Grocery Edit Logic
 // ============================
 let currentGroceryId = null;
+const currentUsername = "{{ current_user.username }}";
 
 function closeGroceryEditBox() {
     document.getElementById("groceryEditBox").style.display = "none";
@@ -174,6 +228,7 @@ let groceryEdits = document.querySelectorAll('.groceryEdit');
 for (let i = 0; i < groceryEdits.length; i++) {
     groceryEdits[i].addEventListener('click', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         currentGroceryId = this.dataset.id;
 
         const listItem = this.closest('li');
@@ -208,6 +263,7 @@ let pantryEdits = document.querySelectorAll('.pantryEdit');
 for (let i = 0; i < pantryEdits.length; i++) {
     pantryEdits[i].addEventListener('click', function (e) {
         e.preventDefault();
+        e.stopPropagation();
         currentPantryId = this.dataset.id;
 
         const listItem = this.closest('li');
@@ -246,81 +302,109 @@ function closeAddPantry() {
     document.getElementById("back").style.display = "none";
 }
 
-document.querySelectorAll('li').forEach(li => {
-  const checkbox = li.querySelector('.boughtCheckbox');
-  const reorderBtn = li.querySelector('.reorderButton');
-  if (reorderBtn && checkbox && !checkbox.checked) {
-    reorderBtn.remove();
-  }
+function closeConfirmBox() {
+  document.getElementById('groceryConfirmBox').style.display = 'none';
+  document.getElementById('back').style.display = 'none';
+}
+
+let selectedGroceryItem = null;
+
+document.querySelectorAll('.groceryItem').forEach(item => {
+  item.addEventListener('click', (e) => {
+
+    if (item.classList.contains('bought')) return;
+
+    if (e.target.closest('.groceryEdit') || e.target.closest('#groceryRemove')) return;
+
+    selectedGroceryItem = item;
+
+    const id = item.dataset.id;
+    const name = item.dataset.name;
+    const price = item.dataset.price;
+
+    document.getElementById('confirmGroceryId').value = id;
+    document.getElementById('confirmText').textContent = `Did you buy ${name} for $${price}?`;
+    document.getElementById('back').style.display = 'flex';
+    document.getElementById('groceryConfirmBox').style.display = 'flex';
+  });
 });
 
-const currentUsername = "{{ current_user.username }}";
 
-document.querySelectorAll('.boughtCheckbox').forEach(checkbox => {
-  checkbox.addEventListener('change', async function () {
-    const id = this.dataset.id;
-    const isChecked = this.checked;
+document.getElementById('confirmBuyForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  e.stopPropagation();
 
-    const li = this.closest('li');
-    const listBox = li.querySelector('#listBox');
-    const requesterDiv = li.querySelector('#requester');
-    const ul = li.parentNode;
+  const id = document.getElementById('confirmGroceryId').value;
+  const quantity = document.getElementById('confirmQuantity').value;
+  const expiration = document.getElementById('confirmExpiry').value;
 
-    const baseText = requesterDiv.textContent.split('·')[0].trim();
+  const li = document.querySelector(`.groceryItem[data-id="${id}"]`);
+  const listBox = li?.querySelector('#listBox');
+  const requesterDiv = li?.querySelector('#requester');
 
-    if (isChecked) {
-      li.classList.add('bought');
-      listBox.classList.add('crossedOut');
-      requesterDiv.textContent = `${baseText} · Bought by ${currentUsername}`;
+  const requesterId = selectedGroceryItem?.dataset.requesterId;
+  const requesterName = selectedGroceryItem?.dataset.requesterName;
 
-      // move to bottom
-      ul.appendChild(li);
-
-      // Add reorder button if not there
-      if (!listBox.querySelector('.reorderButton')) {
-        const reorderBtn = document.createElement('a');
-        reorderBtn.href = '#';
-        reorderBtn.className = 'reorderButton';
-        reorderBtn.dataset.id = id;
-        reorderBtn.textContent = '+';
-        requesterDiv.appendChild(reorderBtn);
-
-        reorderBtn.addEventListener('click', async function (e) {
-          e.preventDefault();
-          checkbox.checked = false;
-          li.classList.remove('bought');
-          listBox.classList.remove('crossedOut');
-          requesterDiv.textContent = baseText;
-          reorderBtn.remove();
-          ul.insertBefore(li, ul.firstChild);
-
-          await fetch('/mark-bought', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, bought: false, buyer_username: null })
-          });
-        });
-      }
-
-    } else {
-      li.classList.remove('bought');
-      listBox.classList.remove('crossedOut');
-      requesterDiv.textContent = baseText;
-
-      // remove reorder button if it exists
-      const reorderBtn = listBox.querySelector('.reorderButton');
-      if (reorderBtn) reorderBtn.remove();
-
-      // move to top
-      ul.insertBefore(li, ul.firstChild);
-    }
-
-    await fetch('/mark-bought', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, bought: isChecked, buyer_username: isChecked ? currentUsername : null })
-    });
+  await fetch('/move-to-pantry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id,
+      quantity,
+      expiration,
+      new_owner_id: requesterId,
+      new_owner_name: requesterName
+    })
   });
+
+  // Visually cross out + move to bottom
+  listBox?.classList.add('crossedOut');
+  li?.classList.add('bought');
+  li.parentNode.appendChild(li);
+
+  // Update requester text
+  const baseText = requesterDiv.textContent.split('·')[0].trim();
+  requesterDiv.textContent = `${baseText} · Bought by ${currentUsername}`;
+
+
+  closeConfirmBox();
+});
+
+
+function closeRequestBox() {
+  document.getElementById('pantryRequestBox').style.display = 'none';
+  document.getElementById('back').style.display = 'none';
+}
+
+document.querySelectorAll('.pantryRequest').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const id = btn.dataset.id;
+    const name = btn.dataset.name;
+
+    document.getElementById('requestPantryId').value = id;
+    document.getElementById('requestPromptText').textContent = `Request some of "${name}"`;
+    document.getElementById('back').style.display = 'flex';
+    document.getElementById('pantryRequestBox').style.display = 'flex';
+  });
+});
+
+document.getElementById('requestPantryForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const id = document.getElementById('requestPantryId').value;
+  const amount = this.amount.value;
+  const note = this.note.value;
+
+  await fetch('/request-pantry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, amount, note })
+  });
+
+  closeRequestBox();
 });
 
 

@@ -298,7 +298,7 @@ ul {
     margin-top: 10px;
     padding:18px;
     line-height: 20px;
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -306,7 +306,7 @@ ul {
     position: relative;
 }
 #pantry ul li:hover, #grocery ul li:hover{ 
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: rgba(0, 0, 0, 0.15);
     transition: 0.3s ease;
 }
 #listBox{
@@ -376,7 +376,7 @@ ul {
     color:var(--blue);
 }
 
-#groceryEditBox, #pantryEditBox {
+#groceryEditBox, #pantryEditBox, #groceryAddBox, #pantryAddBox , #pantryRequestBox, #groceryConfirmBox{
     display: none;
     background-color: var(--top-bar-color);
     padding: 20px;
@@ -388,10 +388,11 @@ ul {
     align-items: center;
     font-size: 26px;
 }
-#pantryEditBox{
+#pantryEditBox,#pantryAddBox, #pantryRequestBox, #groceryConfirmBox{
     width: 350px;
-    height: 350px;
+    height: 370px;
 }
+
 #back {
     display: none;
     position: fixed;
@@ -444,14 +445,14 @@ ul {
     font-size: 26px;
 }
 
-#editGroceryForm button, #editPantryForm button{
+#editGroceryForm button, #editPantryForm button, #groceryAddBox button, #acceptButton{
     margin-top: 10px;
 
 }
-#editPantryForm button{
-    margin-top: 60px;
+#editPantryForm button, #pantryAddBox button{
+    margin-top: 60px; 
 }
-#editGroceryForm button:hover, #editPantryForm button:hover{
+#editGroceryForm button:hover, #editPantryForm button:hover,#groceryAddBox button:hover,#pantryAddBox button:hover, #acceptButton:hover{
     background-color: var(--text-color1);
     color: var(--primary-color);
     transition: 0.3s ease;
@@ -465,7 +466,7 @@ ul {
     transition: 0.3s ease;
 }
 
-#groceryEditBox h3, #pantryEditBox h3{
+#groceryEditBox h3, #pantryEditBox h3, #pantryAddBox, #groceryAddBox{
     color: var(--button-text-color)
 }
 
@@ -483,6 +484,7 @@ ul {
 
 }
 
+
 #requests{
     position: absolute;
     left: 70px;
@@ -491,52 +493,88 @@ ul {
 .crossedOut span#price {
   text-decoration: line-through;
   opacity: 0.6;
+  cursor:default;
 }
 
-.customCheckboxWrapper {
-    display: inline-flex;
-    align-items: center;
-    cursor: pointer;
-  }
-  
-  .customCheckboxWrapper input[type="checkbox"] {
-    display: none;
-  }
-  
-  .customCheckbox {
-    width: 18px;
-    height: 18px;
-    border: 2px solid #1e5631;
-    border-radius: 4px;
-    background-color: white;
-    position: relative;
-    transition: all 0.2s ease;
-  }
-  
-  .customCheckboxWrapper input[type="checkbox"]:checked + .customCheckbox {
-    background-color: #1e5631;
-  }
-  
-  .customCheckbox::after {
-    content: '';
+.pantryBuyer{
+    border-bottom: solid 0.5px;
+    padding-top: 15px; 
+    padding-bottom: 20px;
+    text-align: center;
+    width: 100%;
+    position:relative;
+}
+
+.pantryRequest{
+    background-color: var(--logo-color2);
+    padding: 5px;
+    width:50px;
+    text-align: center;
+    border: white solid 1px;
+    border-radius: 25px;
+    line-height: 20px;
+    transition: .3s ease;
+}
+.pantryRequest:hover{
+    border:var(--logo-color2) solid 1px;
+    color: var(--logo-color2);
+    background-color: var(--text-color1);
+}
+
+.itemRequestBadge{
+    color: var(--red);
+    font-size: 20px;
     position: absolute;
-    top: 2px;
-    left: 6px;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  
-  .customCheckboxWrapper input[type="checkbox"]:checked + .customCheckbox::after {
-    opacity: 1;
-  }
-  
+    top: -25px;
+    right: 0px;
+    background-color: rgba(0, 0, 0, 0.165);
+    padding: 7px;
+    border-radius: 10px;
+}
+#pantryRequestBox, #groceryConfirmBox{
+    color: var(--text-color1);
 
+}
+#requestPantryForm, #confirmBuyForm{
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+#groceryConfirmBox{
+    height: 400px;
+    width: 400px;
+}
 
+#pantryRequestBox h3, #groceryConfirmBox h3{
+    color:var(--logo-color2);
+}
+#requestPantryForm div, #confirmBuyForm div{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+}
+#requestPromptText, #confirmText{
+    text-align: center;
+}
+
+.reqBut{
+    margin-left: 20px;
+    margin-right: 20px;
+
+}
+div input{
+    font-size: 24px;
+    width: 50%;
+}
+input{
+    padding: 5px;
+}
+#cancelButton{
+    height: 50px;
+    margin-top: 10px;
+}
 
 /*////////////////////////////////////////////////////////////////////////////////////////////*/
 

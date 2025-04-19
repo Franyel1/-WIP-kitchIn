@@ -339,7 +339,7 @@ ul {
 }
 
 
-#pantryAdd, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove{
+#pantryAdd,.reorderButton, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove{
     line-height: 24px; 
     text-align: center;
     background-color: var(--primary-color);
@@ -356,12 +356,13 @@ ul {
 #groceryRemove, #pantryRemove{
     background-color: var(--red);
     right: 10px;
+    
 }
 .groceryEdit,.pantryEdit{
     background-color: var(--blue);
     right: 40px;
 }
-#pantryAdd:hover, #groceryAdd:hover, #groceryRemove:hover, .groceryEdit:hover,.pantryEdit:hover,#pantryRemove:hover{
+#pantryAdd:hover,.reorderButton:hover, #groceryAdd:hover, #groceryRemove:hover, .groceryEdit:hover,.pantryEdit:hover,#pantryRemove:hover{
     text-decoration: none;
     background-color: var(--text-color1);
     color:var(--primary-color);
@@ -486,7 +487,58 @@ ul {
     position: absolute;
     left: 70px;
 }
+.crossedOut span#item,
+.crossedOut span#price {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
 
+.customCheckboxWrapper {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .customCheckboxWrapper input[type="checkbox"] {
+    display: none;
+  }
+  
+  .customCheckbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #1e5631;
+    border-radius: 4px;
+    background-color: white;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+  
+  .customCheckboxWrapper input[type="checkbox"]:checked + .customCheckbox {
+    background-color: #1e5631;
+  }
+  
+  .customCheckbox::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .customCheckboxWrapper input[type="checkbox"]:checked + .customCheckbox::after {
+    opacity: 1;
+  }
+  
+
+
+
+/*////////////////////////////////////////////////////////////////////////////////////////////*/
 
 
 

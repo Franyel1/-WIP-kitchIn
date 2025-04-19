@@ -32,16 +32,26 @@
             </div>
             <ul>
               {% for item in grocery_list %}
-                <li>
-                  <div id="listBox">
-                    <span id="item">{{ item.name }}</span>
-                    <span id="price">{{ item.price }}$</span>
-                    {% if item.requester_id == current_user_id %}
-                      <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
-                      <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
-                    {% endif %}
-                  </div>
-                  <div id="requester">Request by: {{ item.requester_username or 'unknown' }}</div>
+              <li class="{% if item.bought %}bought{% endif %}">
+                    <div id="listBox" class="{% if item.bought %}crossedOut{% endif %}">
+                        <label class="customCheckboxWrapper">
+                          <input type="checkbox" class="boughtCheckbox" data-id="{{ item._id }}" {% if item.bought %}checked{% endif %}>
+                          <span class="customCheckbox"></span>
+                        </label>
+                        <span id="item">{{ item.name }}</span>
+                        <span id="price">{{ item.price }}$</span>
+                        {% if item.requester_id == current_user_id %}
+                            <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
+                            <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
+                        {% endif %}
+                    </div>
+                    <div id="requester">
+                        Requested by {{ item.requester_username or 'unknown' }}
+                        {% if item.bought and item.buyer_username %}
+                        &nbsp;·&nbsp;Bought by {{ item.buyer_username }}
+                        <a href="#" class="reorderButton" data-id="{{ item._id }}">+</a>
+                        {% endif %}
+                    </div>
                 </li>
               {% endfor %}
             </ul>
@@ -235,6 +245,83 @@ function closeAddPantry() {
     document.getElementById("pantryAddBox").style.display = "none";
     document.getElementById("back").style.display = "none";
 }
+
+document.querySelectorAll('li').forEach(li => {
+  const checkbox = li.querySelector('.boughtCheckbox');
+  const reorderBtn = li.querySelector('.reorderButton');
+  if (reorderBtn && checkbox && !checkbox.checked) {
+    reorderBtn.remove();
+  }
+});
+
+const currentUsername = "{{ current_user.username }}";
+
+document.querySelectorAll('.boughtCheckbox').forEach(checkbox => {
+  checkbox.addEventListener('change', async function () {
+    const id = this.dataset.id;
+    const isChecked = this.checked;
+
+    const li = this.closest('li');
+    const listBox = li.querySelector('#listBox');
+    const requesterDiv = li.querySelector('#requester');
+    const ul = li.parentNode;
+
+    const baseText = requesterDiv.textContent.split('·')[0].trim();
+
+    if (isChecked) {
+      li.classList.add('bought');
+      listBox.classList.add('crossedOut');
+      requesterDiv.textContent = `${baseText} · Bought by ${currentUsername}`;
+
+      // move to bottom
+      ul.appendChild(li);
+
+      // Add reorder button if not there
+      if (!listBox.querySelector('.reorderButton')) {
+        const reorderBtn = document.createElement('a');
+        reorderBtn.href = '#';
+        reorderBtn.className = 'reorderButton';
+        reorderBtn.dataset.id = id;
+        reorderBtn.textContent = '+';
+        requesterDiv.appendChild(reorderBtn);
+
+        reorderBtn.addEventListener('click', async function (e) {
+          e.preventDefault();
+          checkbox.checked = false;
+          li.classList.remove('bought');
+          listBox.classList.remove('crossedOut');
+          requesterDiv.textContent = baseText;
+          reorderBtn.remove();
+          ul.insertBefore(li, ul.firstChild);
+
+          await fetch('/mark-bought', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, bought: false, buyer_username: null })
+          });
+        });
+      }
+
+    } else {
+      li.classList.remove('bought');
+      listBox.classList.remove('crossedOut');
+      requesterDiv.textContent = baseText;
+
+      // remove reorder button if it exists
+      const reorderBtn = listBox.querySelector('.reorderButton');
+      if (reorderBtn) reorderBtn.remove();
+
+      // move to top
+      ul.insertBefore(li, ul.firstChild);
+    }
+
+    await fetch('/mark-bought', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, bought: isChecked, buyer_username: isChecked ? currentUsername : null })
+    });
+  });
+});
 
 
 </script>

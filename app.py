@@ -229,7 +229,11 @@ def add():
 def household(household_id):
     house_id = ObjectId(household_id)
     doc = db.householdData.find_one({"_id":house_id})
-    return render_template("household.html",household = doc)                              
+    grocery_ids = doc.get("grocery",[])
+    pantry_ids = doc.get("grocery",[])
+    grocery_list = list(db.groceryData.find({"_id":{"$in":grocery_ids}}))
+    pantry_list = list(db.pantryData.find({"_id":{"$in":pantry_ids}}))
+    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list)                              
 
 @app.route("/add-grocery/<household_id>", methods = ["POST"])
 @flask_login.login_required

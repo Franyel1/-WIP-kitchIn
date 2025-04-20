@@ -1,72 +1,414 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../static/styles.css">
-  <title>kitchIn</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/styles.css">
+    <title>Household</title>
 </head>
+<body id="householdScreen">
+    <div id="topBar">
+        <h2><a id='logo' href="{{ url_for('home') }}">kitchIn</a></h2>
+        <a href="{{ url_for('logout') }}" class="button" id="logout">
+            Logout
+        </a>
+        <a href="{{ url_for('requests') }}" class="button" id="requests">
+            Requests
+        </a>
 
-<body id="householdScreen" >
-  <div id="topBar">
-    <h2>kitchIn</h2>
-    <a href="{{ url_for('logout') }}" class="button" id="logout">
-        Logout
-    </a>
-  </div>
-  <h3>Welcome to {{ household }}, {{ username }}</h3>
-  <video id="video" width="480" height="360" autoplay></video><br>
-  <button class="button" onclick="capture()">Capture & Check Calories</button><br>
-  <canvas id="canvas" width="480" height="360" style="display:none;"></canvas>
+    </div>
 
-  <div id="result"></div>
+      <div id="householdName">{{household.name}}</div>
+
+      <div id="panels">
+        <div id="groceryPanel">
+          <div id="grocery">
+            <div>
+              <h2>Grocery List</h2>
+              <a href="#" id="groceryAdd" onclick="openAddGrocery()">+</a>
+            </div>
+            <ul>
+              {% for item in grocery_list %}
+              <li class="groceryItem"
+data-id="{{ item._id }}"
+                data-name="{{ item.name }}"
+                data-price="{{ item.price }}"
+                data-requester-id="{{ item.requester_id }}"
+                data-requester-name="{{ item.requester_username or 'unknown' }}">
+                  <div id="listBox">
+                    <span id="item">{{ item.name }}</span>
+                    <span id="price">{{ item.price }}$</span>
+                    {% if item.requester_id == current_user_id %}
+                        <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
+                        <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
+                    {% endif %}
+                  </div>
+                  <div id="requester">
+                      Requested by {{ item.requester_username or 'unknown' }}
+                  </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      
+        <div id="pantryPanel">
+          <div id="pantry">
+            <div>
+              <h2>Pantry</h2>
+              <a href="#" id="pantryAdd" onclick="openAddPantry()">+</a>
+            </div>
+            <ul>
+              {% for item in pantry %}
+              <li>
+                {% if item.buyer_username %}
+                  <div class="pantryBuyer">
+                    Bought by: {{ item.buyer_username }}
+                    {% if item.owner_id == current_user_id and item.request_count > 0 %}
+                      <span class="itemRequestBadge">📥 {{ item.request_count }}</span>
+                    {% endif %}
+                  </div>
+                  
+                {% endif %}
+                <div id="listBox">
+                  <span id="item">{{ item.name }}</span>
+                  <span id="quantity">{{ item.quantity }}</span>
+                  {% if item.owner_id == current_user_id %}
+                    <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
+                    <a href="{{ url_for('removePantry', id=item._id) }}" id="pantryRemove">-</a>
+                  {% endif %}
+                </div>
+                <div id="expiry">exp: {{ item.expiration }}</div>
+                {% if item.owner_id != current_user_id %}
+                  <a href="#" class="pantryRequest" data-id="{{ item._id }}" data-name="{{ item.name }}">✉</a>
+                {% endif %}
+              </li>
+            {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>      
+
+    <div id="back">
+        <div id="pantryRequestBox" style="display:none;">
+          <h3>Request From Pantry</h3>
+          <form id="requestPantryForm">
+            <input type="hidden" id="requestPantryId">
+            <p id="requestPromptText"></p>
+            <div>
+              <label>Amount:</label>
+              <input type="text" name="amount" class="reqBut"><br>
+            </div>
+            
+            <div>
+              <label>Note (optional):</label>
+              <input type="text" name="note"><br><br>
+            </div>
+            
+            <div>
+              <button class="button reqBut"id="acceptButton" type="submit">Request</button>
+              <button class="button reqBut" type="button" id="cancelButton"onclick="closeRequestBox()">Cancel</button>
+            </div>
+            
+          </form>
+      </div>
+        <div id="groceryConfirmBox" style="display:none;">
+          <h3>Confirm Purchase</h3>
+          <form id="confirmBuyForm">
+            <input type="hidden" id="confirmGroceryId">
+            <p id="confirmText"></p>
+            <div>
+              <label>Quantity (optional):</label>
+              <input type="text" id="confirmQuantity"><br>
+            </div>
+              
+            <div>
+              <label>Expiration Date (optional):</label>
+              <input type="text" id="confirmExpiry"><br><br>
+            </div>
+            
+            <div>
+              <button type="submit" class="button reqBut"id="acceptButton">Yes, I bought it</button>
+              <button type="button" class="button reqBut" id="cancelButton"onclick="closeConfirmBox()">Cancel</button>
+            </div>
+              
+          </form>
+        </div>
+        <div id="pantryEditBox">
+            <h3>Edit Pantry Item</h3>
+            <form id="editPantryForm" method="POST" action="/update-pantry">
+                <div id="questions2">
+                    <input type="hidden" name="id" id="pantryItemId">
+                  
+                    <label for="editName">Name:</label>
+                    <input type="text" name="name" id="editName"><br><br>
+                  
+                    <label for="editQuantity">Quantity:</label>
+                    <input type="text" name="quantity" id="editQuantity"><br><br>
+                  
+                    <label for="editExpiry">Expiration Date:</label>
+                    <input type="text" name="expiration" id="editExpiry"><br>
+                  </div>
+                <button class="button"type="submit">Save</button>
+                <button class="button"type="button"id="cancelButton" onclick="closePantryEditBox()">Cancel</button>
+            </form>         
+        </div>
+        <div id="groceryEditBox">
+            <h3>Edit Grocery Item</h3>
+            <form id="editGroceryForm" method="POST" action="/update-grocery">
+                <div id="questions">
+                    <input type="hidden" name="id" id="groceryItemId">
+                  
+                    <label for="groceryEditName">Name:</label>
+                    <input type="text" name="name" id="groceryEditName"><br><br>
+                  
+                    <label for="groceryEditPrice">Price:</label>
+                    <input type="text" name="price" id="groceryEditPrice"><br><br>
+                
+                </div>
+                <button class="button" type="submit">Save</button>
+                <button class="button" id="cancelButton" type="button" onclick="closeGroceryEditBox()">Cancel</button>
+            </form>
+        </div>
+
+        <!--TODO: fix the css for the add part-->
+        <div id="groceryAddBox" style="display:none;">
+            <h3>Add Grocery Item</h3>
+            <form id="addGroceryForm" method="POST" action="/add-grocery">
+              <div id="questions">
+                <label for="addGroceryName">Name:</label>
+                <input type="text" name="name" id="addGroceryName"><br><br>
+          
+                <label for="addGroceryPrice">Price:</label>
+                <input type="text" name="price" id="addGroceryPrice"><br><br>
+              </div>
+              <button class="button" type="submit">Add</button>
+              <button class="button" type="button"id="cancelButton"  onclick="closeAddGrocery()">Cancel</button>
+            </form>
+          </div>
+          <div id="pantryAddBox" style="display:none;">
+            <h3>Add Pantry Item</h3>
+            <form id="addPantryForm" method="POST" action="/add-pantry">
+              <div id="questions2">
+                <label for="addPantryName">Name:</label>
+                <input type="text" name="name" id="addPantryName"><br><br>
+          
+                <label for="addPantryQuantity">Quantity:</label>
+                <input type="text" name="quantity" id="addPantryQuantity"><br><br>
+          
+                <label for="addPantryExpiry">Expiration Date:</label>
+                <input type="text" name="expiration" id="addPantryExpiry"><br>
+              </div>
+              <button class="button" type="submit">Add</button>
+              <button class="button" type="button"id="cancelButton"  onclick="closeAddPantry()">Cancel</button>
+            </form>
+          </div>
+          
+    </div>
+      
+      
+      
+<script>
+// ============================
+// Grocery Edit Logic
+// ============================
+let currentGroceryId = null;
+const currentUsername = "{{ current_user.username }}";
+
+function closeGroceryEditBox() {
+    document.getElementById("groceryEditBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
+
+let groceryEdits = document.querySelectorAll('.groceryEdit');
+
+for (let i = 0; i < groceryEdits.length; i++) {
+    groceryEdits[i].addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        currentGroceryId = this.dataset.id;
+
+        const listItem = this.closest('li');
+
+        const name = listItem.querySelector('#item')?.textContent || '';
+        const price = listItem.querySelector('#price')?.textContent.replace('$', '') || '';
+        const requesterText = listItem.querySelector('#requester')?.textContent || '';
+        const requester = requesterText.replace('Request by: ', '').trim();
+
+        document.getElementById("groceryItemId").value = currentGroceryId;
+        document.getElementById("groceryEditName").value = name;
+        document.getElementById("groceryEditPrice").value = price;
+
+        document.getElementById("groceryEditBox").style.display = "flex";
+        document.getElementById("back").style.display = "flex";
+    });
+}
 
 
-  <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const result = document.getElementById('result');
-    const context = canvas.getContext('2d');
+// ============================
+// Pantry Edit Logic
+// ============================
+let currentPantryId = null;
+
+function closePantryEditBox() {
+    document.getElementById("pantryEditBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
+
+let pantryEdits = document.querySelectorAll('.pantryEdit');
+
+for (let i = 0; i < pantryEdits.length; i++) {
+    pantryEdits[i].addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        currentPantryId = this.dataset.id;
+
+        const listItem = this.closest('li');
+
+        const name = listItem.querySelector('#item')?.textContent || '';
+        const quantity = listItem.querySelector('#quantity')?.textContent || '';
+        const expiryText = listItem.querySelector('#expiry')?.textContent || '';
+        const expiry = expiryText.replace('exp: ', '').trim();
+
+        document.getElementById("pantryItemId").value = currentPantryId;
+        document.getElementById("editName").value = name;
+        document.getElementById("editQuantity").value = quantity;
+        document.getElementById("editExpiry").value = expiry;
+
+        document.getElementById("pantryEditBox").style.display = "flex";
+        document.getElementById("back").style.display = "flex";
+    });
+
+}
+
+function openAddGrocery() {
+    document.getElementById("back").style.display = "flex";
+    document.getElementById("groceryAddBox").style.display = "flex";
+}
+function closeAddGrocery() {
+    document.getElementById("groceryAddBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
+
+function openAddPantry() {
+    document.getElementById("back").style.display = "flex";
+    document.getElementById("pantryAddBox").style.display = "flex";
+}
+function closeAddPantry() {
+    document.getElementById("pantryAddBox").style.display = "none";
+    document.getElementById("back").style.display = "none";
+}
+
+function closeConfirmBox() {
+  document.getElementById('groceryConfirmBox').style.display = 'none';
+  document.getElementById('back').style.display = 'none';
+}
+
+let selectedGroceryItem = null;
+
+document.querySelectorAll('.groceryItem').forEach(item => {
+  item.addEventListener('click', (e) => {
+
+    if (item.classList.contains('bought')) return;
+
+    if (e.target.closest('.groceryEdit') || e.target.closest('#groceryRemove')) return;
+
+    selectedGroceryItem = item;
+
+    const id = item.dataset.id;
+    const name = item.dataset.name;
+    const price = item.dataset.price;
+
+    document.getElementById('confirmGroceryId').value = id;
+    document.getElementById('confirmText').textContent = `Did you buy ${name} for $${price}?`;
+    document.getElementById('back').style.display = 'flex';
+    document.getElementById('groceryConfirmBox').style.display = 'flex';
+  });
+});
+
+
+document.getElementById('confirmBuyForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const id = document.getElementById('confirmGroceryId').value;
+  const quantity = document.getElementById('confirmQuantity').value;
+  const expiration = document.getElementById('confirmExpiry').value;
+
+  const li = document.querySelector(`.groceryItem[data-id="${id}"]`);
+  const listBox = li?.querySelector('#listBox');
+  const requesterDiv = li?.querySelector('#requester');
+
+  const requesterId = selectedGroceryItem?.dataset.requesterId;
+  const requesterName = selectedGroceryItem?.dataset.requesterName;
+
+  await fetch('/move-to-pantry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id,
+      quantity,
+      expiration,
+      new_owner_id: requesterId,
+      new_owner_name: requesterName
+    })
+  });
+
+  // Visually cross out + move to bottom
+  listBox?.classList.add('crossedOut');
+  li?.classList.add('bought');
+  li.parentNode.appendChild(li);
+
+  // Update requester text
+  const baseText = requesterDiv.textContent.split('·')[0].trim();
+  requesterDiv.textContent = `${baseText} · Bought by ${currentUsername}`;
+
+
+  closeConfirmBox();
+});
+
+
+function closeRequestBox() {
+  document.getElementById('pantryRequestBox').style.display = 'none';
+  document.getElementById('back').style.display = 'none';
+}
+
+document.querySelectorAll('.pantryRequest').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const id = btn.dataset.id;
+    const name = btn.dataset.name;
+
+    document.getElementById('requestPantryId').value = id;
+    document.getElementById('requestPromptText').textContent = `Request some of "${name}"`;
+    document.getElementById('back').style.display = 'flex';
+    document.getElementById('pantryRequestBox').style.display = 'flex';
+  });
+});
+
+document.getElementById('requestPantryForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const id = document.getElementById('requestPantryId').value;
+  const amount = this.amount.value;
+  const note = this.note.value;
+
+  await fetch('/request-pantry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, amount, note })
+  });
+
+  closeRequestBox();
+});
+
+
+</script>
   
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => { video.srcObject = stream; })
-      .catch(err => alert("Webcam access denied."));
-  
-    function capture() {
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(async function(blob) {
-        const formData = new FormData();
-        formData.append('file', blob, 'snapshot.jpg');
-        formData.append('prompt', 'this is food please give just number of calories');
-  
-        result.innerText = "Analyzing...";
-        result.style.backgroundColor = "#f4f4f4";
-        result.style.color = "#333";
-        result.style.padding = '15px 20px'
-  
-        const res = await fetch('/capture', {
-          method: 'POST',
-          body: formData
-        });
-  
-        const data = await res.json();
-  
-        if (data.calories) {
-          result.innerText = `Estimated Calories: ${data.calories}`;
-          result.style.backgroundColor = "#e8f5e9";  
-          result.style.color = "#2e7d32";
-        } else {
-          result.innerText = `Error: ${data.error || 'Unknown error'}`;
-          result.style.backgroundColor = "#ffebee";
-          result.style.color = "#c62828";
-        }
-      }, 'image/jpeg');
-    }
-  </script>
 </body>
-
 </html>

@@ -187,16 +187,6 @@ def delete(rest_id):
     db.restaurantData.delete_one({'_id':rest_id})
     return redirect("/home")
 
-@app.route("/roulette")
-def roulette():
-    user = flask_login.current_user.username
-    docs = db.restaurantData.find({'user_id':user})
-    ids = [doc['_id'] for doc in docs] 
-    if not ids:
-        return redirect("/home")
-    id = random.choice(ids)
-    winner = db.restaurantData.find_one({'_id':id})
-    return render_template('roulette.html', restaurant = winner)
 
 
 ####################################################################################
@@ -255,3 +245,7 @@ if __name__ == "__main__":
     FLASK_ENV = os.getenv("FLASK_ENV")
     print(f"FLASK_ENV: {FLASK_ENV}, FLASK_PORT: {FLASK_PORT}")
     app.run(debug=True, host="0.0.0.0", port=5000)
+
+
+###############################HOUSEHOLD###########################
+

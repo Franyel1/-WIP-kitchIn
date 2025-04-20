@@ -34,7 +34,12 @@
 
     <!-- todo: implement mongoDB integration to map each household name to container & link 
                 if no households, display italics no households yet-->
+<<<<<<< Updated upstream
     <a href="/your-target-url" class="householdContainer">
+=======
+    {% for household in households %}
+    <a href="/household/{{ household._id }}" class="householdContainer">
+>>>>>>> Stashed changes
         <span class="name">{{ household.name }}</span>
         <span class="num">{{ household.count }} members</span>
     </a>

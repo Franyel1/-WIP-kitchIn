@@ -237,7 +237,11 @@ def add_grocery(household_id):
     if request.method == "POST":
         name = request.form['name']
         note = request.form['note']
-        grocery = db.groceryData.insert_one({'name':name,'note':note})
+        username = flask_login.current_user.username
+        user = User.find_by_username(username)
+        requester_id = user.id
+        requester = username
+        grocery = db.groceryData.insert_one({'name':name,'note':note, 'requester_id': requester_id, 'requester':requester})
         grocery_id = grocery.inserted_id
         house_id = ObjectId(household_id)
         db.householdData.update_one({"_id":house_id},{"$push":{"grocery":grocery_id}})
@@ -250,7 +254,11 @@ def add_pantry(household_id):
         name = request.form['name']
         quantity = request.form['quantity']
         exp_date = request.form['expiration']
-        pantry = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date})
+        username = flask_login.current_user.username
+        user = User.find_by_username(username)
+        owner_id = user.id
+        owner = username
+        pantry = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date,'owner_id':owner_id, 'owner':owner})
         pantry_id = pantry.inserted_id
         house_id = ObjectId(household_id)
         db.householdData.update_one({"_id":house_id},{"$push":{"pantry":pantry_id}})

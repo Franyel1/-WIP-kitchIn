@@ -31,7 +31,7 @@
               <a href="#" id="groceryAdd" onclick="openAddGrocery()">+</a>
             </div>
             <ul>
-              {% for item in household.grocery %}
+              {% for item in groceryList %}
               <li class="groceryItem" data-id="{{ item._id }}"
                 data-name="{{ item.name }}"
                 data-note="{{ item.note }}"
@@ -41,8 +41,10 @@
                     <span id="item">{{ item.name }}</span>
                     <span id="note">{{ item.note }}</span>
                     {% if item.requester_id == current_user_id %}
-                        <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
-                        <a href="/delete-grocery/{{household._id}}/{{item._id}}" id="groceryRemove">-</a>
+                    <form id="deleteForm-{{ item._id }}" method="POST" action="/delete-grocery/{{ household._id }}/{{ item._id }}">
+                        <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
+                        <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
+                    </form>
                     {% endif %}
                   </div>
                   <div id="requester">
@@ -61,7 +63,7 @@
               <a href="#" id="pantryAdd" onclick="openAddPantry()">+</a>
             </div>
             <ul>
-              {% for item in household.pantry %}
+              {% for item in pantryList %}
               <li>
                 {% if item.buyer_username %}
                   <div class="pantryBuyer">
@@ -76,11 +78,13 @@
                   <span id="item">{{ item.name }}</span>
                   <span id="quantity">{{ item.quantity }}</span>
                   {% if item.owner_id == current_user_id %}
+                  <form id="deleteForm-{{ item._id }}" method="POST" action="/delete-pantry/{{ household._id }}/{{ item._id }}">
                     <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
-                    <a href="/delete-grocery/{{household._id}}/{{item._id}}" id="pantryRemove">-</a>
+                    <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
+                </form>
                   {% endif %}
                 </div>
-                <div id="expiry">exp: {{ item.expiration }}</div>
+                <div id="expiry">exp: {{ item.exp_date }}</div>
                 {% if item.owner_id != current_user_id %}
                   <a href="#" class="pantryRequest" data-id="{{ item._id }}" data-name="{{ item.name }}">✉</a>
                 {% endif %}

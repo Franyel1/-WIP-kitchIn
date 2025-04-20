@@ -225,8 +225,8 @@ def add():
     return render_template("add.html")
 
 @app.route("/household/<household_id>")
-def household(house_id):
-    house_id = ObjectId(house_id)
+def household(household_id):
+    house_id = ObjectId(household_id)
     doc = db.householdData.find_one({"_id":house_id})
     return render_template("household.html",household = doc)                              
 

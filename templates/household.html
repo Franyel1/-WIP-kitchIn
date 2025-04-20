@@ -15,7 +15,7 @@
         <a href="{{ url_for('logout') }}" class="button" id="logout">
             Logout
         </a>
-        <a href="{{ url_for('requests') }}" class="button" id="requests">
+        <a href="requests.html" class="button" id="requests">
             Requests
         </a>
 
@@ -42,7 +42,7 @@
                     <span id="price">{{ item.price }}$</span>
                     {% if item.requester_id == current_user_id %}
                         <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
-                        <a href="{{ url_for('removeGrocery', id=item._id) }}" id="groceryRemove">-</a>
+                        <a href="/delete-grocery/{{household._id}}/{{item._id}}" id="groceryRemove">-</a>
                     {% endif %}
                   </div>
                   <div id="requester">
@@ -77,7 +77,7 @@
                   <span id="quantity">{{ item.quantity }}</span>
                   {% if item.owner_id == current_user_id %}
                     <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
-                    <a href="{{ url_for('removePantry', id=item._id) }}" id="pantryRemove">-</a>
+                    <a href="/delete-grocery/{{household._id}}/{{item._id}}" id="pantryRemove">-</a>
                   {% endif %}
                 </div>
                 <div id="expiry">exp: {{ item.expiration }}</div>
@@ -116,17 +116,25 @@
       </div>
         <div id="groceryConfirmBox" style="display:none;">
           <h3>Confirm Purchase</h3>
-          <form id="confirmBuyForm">
+          <form id="confirmBuyForm" method="POST">
             <input type="hidden" id="confirmGroceryId">
             <p id="confirmText"></p>
+
             <div>
-              <label>Quantity (optional):</label>
-              <input type="text" id="confirmQuantity"><br>
+              <label>Price:</label>
+              <input type="text" id="confirmPrice" name="price" required><br>
             </div>
+
+            <div>
+              
+              <label>Quantity (optional):</label>
+              <input type="text" id="confirmQuantity" name="quantity"><br>
+            </div>
+            
               
             <div>
               <label>Expiration Date (optional):</label>
-              <input type="text" id="confirmExpiry"><br><br>
+              <input type="text" id="confirmExpiry" name="expiry"><br><br>
             </div>
             
             <div>
@@ -138,8 +146,8 @@
         </div>
         <div id="pantryEditBox">
             <h3>Edit Pantry Item</h3>
-            <form id="editPantryForm" method="POST" action="/update-pantry">
-                <div id="questions2">
+            <form id="editPantryForm" method="POST">
+              <div id="questions2">
                     <input type="hidden" name="id" id="pantryItemId">
                   
                     <label for="editName">Name:</label>
@@ -157,15 +165,15 @@
         </div>
         <div id="groceryEditBox">
             <h3>Edit Grocery Item</h3>
-            <form id="editGroceryForm" method="POST" action="/update-grocery">
+            <form id="editGroceryForm" method="POST" action="/edit-grocery/{{household._id}}/{{item._id}}">
                 <div id="questions">
                     <input type="hidden" name="id" id="groceryItemId">
                   
                     <label for="groceryEditName">Name:</label>
                     <input type="text" name="name" id="groceryEditName"><br><br>
-                  
-                    <label for="groceryEditPrice">Price:</label>
-                    <input type="text" name="price" id="groceryEditPrice"><br><br>
+
+                    <label for="groceryEditNote">Note:</label>
+                    <input type="text" name="note" id="groceryEditNote"><br><br>
                 
                 </div>
                 <button class="button" type="submit">Save</button>
@@ -176,13 +184,14 @@
         <!--TODO: fix the css for the add part-->
         <div id="groceryAddBox" style="display:none;">
             <h3>Add Grocery Item</h3>
-            <form id="addGroceryForm" method="POST" action="/add-grocery">
+            <form id="addGroceryForm" method="POST" action="/add-grocery/{{household._id}}">
               <div id="questions">
                 <label for="addGroceryName">Name:</label>
                 <input type="text" name="name" id="addGroceryName"><br><br>
-          
-                <label for="addGroceryPrice">Price:</label>
-                <input type="text" name="price" id="addGroceryPrice"><br><br>
+
+                <label for="addGroceryMessage">Note:</label>
+                <input type="text" name="note" id="addGroceryNote"><br><br>
+
               </div>
               <button class="button" type="submit">Add</button>
               <button class="button" type="button"id="cancelButton"  onclick="closeAddGrocery()">Cancel</button>
@@ -190,10 +199,10 @@
           </div>
           <div id="pantryAddBox" style="display:none;">
             <h3>Add Pantry Item</h3>
-            <form id="addPantryForm" method="POST" action="/add-pantry">
+            <form id="addPantryForm" method="POST" action="/add-pantry/{{household._id}}">
               <div id="questions2">
                 <label for="addPantryName">Name:</label>
-                <input type="text" name="name" id="addPantryName"><br><br>
+                <input type="text" name="name" id="addPantryName" required><br><br>
           
                 <label for="addPantryQuantity">Quantity:</label>
                 <input type="text" name="quantity" id="addPantryQuantity"><br><br>
@@ -228,24 +237,24 @@ let groceryEdits = document.querySelectorAll('.groceryEdit');
 
 for (let i = 0; i < groceryEdits.length; i++) {
     groceryEdits[i].addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        currentGroceryId = this.dataset.id;
+      e.preventDefault();
+      e.stopPropagation();
+      currentGroceryId = this.dataset.id;
 
-        const listItem = this.closest('li');
+      const listItem = this.closest('li');
+      const name = listItem.querySelector('#item')?.textContent || '';
+      const note = listItem.querySelector('#note')?.textContent || '';
 
-        const name = listItem.querySelector('#item')?.textContent || '';
-        const price = listItem.querySelector('#price')?.textContent.replace('$', '') || '';
-        const requesterText = listItem.querySelector('#requester')?.textContent || '';
-        const requester = requesterText.replace('Request by: ', '').trim();
+      document.getElementById("groceryItemId").value = currentGroceryId;
+      document.getElementById("groceryEditName").value = name;
+      document.getElementById("groceryEditNote").value = note;
 
-        document.getElementById("groceryItemId").value = currentGroceryId;
-        document.getElementById("groceryEditName").value = name;
-        document.getElementById("groceryEditPrice").value = price;
+      document.getElementById("editGroceryForm").action = `/edit-grocery/{{ household._id }}/${currentGroceryId}`;
 
-        document.getElementById("groceryEditBox").style.display = "flex";
-        document.getElementById("back").style.display = "flex";
-    });
+      document.getElementById("groceryEditBox").style.display = "flex";
+      document.getElementById("back").style.display = "flex";
+  });
+
 }
 
 
@@ -263,25 +272,28 @@ let pantryEdits = document.querySelectorAll('.pantryEdit');
 
 for (let i = 0; i < pantryEdits.length; i++) {
     pantryEdits[i].addEventListener('click', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        currentPantryId = this.dataset.id;
+      e.preventDefault();
+      e.stopPropagation();
+      currentPantryId = this.dataset.id;
 
-        const listItem = this.closest('li');
+      const listItem = this.closest('li');
 
-        const name = listItem.querySelector('#item')?.textContent || '';
-        const quantity = listItem.querySelector('#quantity')?.textContent || '';
-        const expiryText = listItem.querySelector('#expiry')?.textContent || '';
-        const expiry = expiryText.replace('exp: ', '').trim();
+      const name = listItem.querySelector('#item')?.textContent || '';
+      const quantity = listItem.querySelector('#quantity')?.textContent || '';
+      const expiryText = listItem.querySelector('#expiry')?.textContent || '';
+      const expiry = expiryText.replace('exp: ', '').trim();
 
-        document.getElementById("pantryItemId").value = currentPantryId;
-        document.getElementById("editName").value = name;
-        document.getElementById("editQuantity").value = quantity;
-        document.getElementById("editExpiry").value = expiry;
+      document.getElementById("pantryItemId").value = currentPantryId;
+      document.getElementById("editName").value = name;
+      document.getElementById("editQuantity").value = quantity;
+      document.getElementById("editExpiry").value = expiry;
 
-        document.getElementById("pantryEditBox").style.display = "flex";
-        document.getElementById("back").style.display = "flex";
-    });
+      document.getElementById("editPantryForm").action = `/edit-pantry/{{ household._id }}/${currentPantryId}`;
+
+      document.getElementById("pantryEditBox").style.display = "flex";
+      document.getElementById("back").style.display = "flex";
+  });
+
 
 }
 
@@ -321,10 +333,9 @@ document.querySelectorAll('.groceryItem').forEach(item => {
 
     const id = item.dataset.id;
     const name = item.dataset.name;
-    const price = item.dataset.price;
 
     document.getElementById('confirmGroceryId').value = id;
-    document.getElementById('confirmText').textContent = `Did you buy ${name} for $${price}?`;
+    document.getElementById('confirmText').textContent = `Did you buy ${name}?`;
     document.getElementById('back').style.display = 'flex';
     document.getElementById('groceryConfirmBox').style.display = 'flex';
   });
@@ -357,6 +368,11 @@ document.getElementById('confirmBuyForm').addEventListener('submit', async funct
       new_owner_name: requesterName
     })
   });
+  const price = document.getElementById('confirmPrice').value;
+  const priceSpan = li?.querySelector('#price');
+  if (priceSpan) {
+    priceSpan.textContent = `$${price}`;
+  }
 
   // Visually cross out + move to bottom
   listBox?.classList.add('crossedOut');

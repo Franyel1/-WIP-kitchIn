@@ -9,6 +9,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv, dotenv_values
 from flask_login import login_required, current_user
+import random
 
 load_dotenv()  # Load environment variables
 
@@ -35,14 +36,17 @@ class User(flask_login.UserMixin):
         self.email = user_data["email"]
         self.username = user_data["username"]
         self.password = user_data["password"]
-        self.friends = user_data.get("friends", [])
-
+        self.households = []
     @staticmethod
     def find_by_username(username):
         """Find user by username in MongoDB."""
         user_data = db.loginInfo.find_one({"username": username})
         return User(user_data) if user_data else None
-
+    @staticmethod
+    def find_by_email(email):
+        """Find user by email in MongoDB."""
+        user_data = db.loginInfo.find_one({"email": email})
+        return User(user_data) if user_data else None
     @staticmethod
     def find_by_id(user_id):
         """Find user by ID in MongoDB."""
@@ -63,7 +67,7 @@ class User(flask_login.UserMixin):
             "email": email,
             "username": username,
             "password": hashed_password,
-            "friends": [],
+            "households": []
         })
         return True
     
@@ -126,9 +130,9 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
-        user = User.find_by_username(username)
+        user = User.find_by_email(email)
 
         if user and check_password_hash(user.password, password):  
             flask_login.login_user(user)
@@ -143,9 +147,61 @@ def login():
 @app.route("/home")
 @flask_login.login_required
 def home():
-    user = flask_login.current_user.username
-    docs = db.restaurantData.find({'user_id':user})
-    return render_template("home.html", user = user, restaurants = docs)
+    user = db.loginInfo.find_one({"_id": ObjectId(current_user.id)})
+    names = user.get("households", [])
+    docs = db.householdData.find({"name": {"$in": names}})
+    return render_template("home.html", user = user, households = docs)
+
+@app.route("/create-household", methods = ['POST'])
+@flask_login.login_required
+def create_household():
+    if request.method == "POST":
+        name = request.form['name']
+        #color = request.form['color']
+        code = generate_code()
+        while db.householdData.find_one({'code':code}):
+            code = generate_code()
+        members = [flask_login.current_user.username]
+        grocery = []
+        pantry = []
+        requests = []
+        doc = {'name': name, 'code':code, 'members':members, 'grocery':grocery, 'pantry':pantry, 'requests':requests}
+        db.householdData.insert_one(doc)
+        user = User.find_by_username(flask_login.current_user.username)
+        user.households.append(name)
+        db.loginInfo.update_one(
+            {"_id": ObjectId(user.id)},
+            {"$push": {"households": name}}
+        )
+        return redirect("/home")
+            
+def generate_code():
+    letters = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890'
+    return ''.join(random.choices(letters,k=4))
+    
+@app.route("/join-household", methods=['POST'])
+@flask_login.login_required
+def join_household():
+    if request.method == "POST":
+        code = request.form['code']
+    household = db.householdData.find_one({'code':code})
+    username = flask_login.current_user.username
+    user = User.find_by_username(username)
+    if household:
+        if username not in household.get('members', []):
+            db.householdData.update_one(
+                {"_id":household["_id"]},
+                {"$push":{"members":username}}
+            )
+            db.loginInfo.update_one(
+                {"_id": ObjectId(user.id)},
+                {"$push": {"households": household["name"]}}
+            )
+        else:
+            print('error')
+    else:
+        print('error')
+    return redirect("/home")
 
 
 @app.route("/logout")
@@ -168,6 +224,12 @@ def add():
         return redirect("/home")
     return render_template("add.html")
 
+@app.route("/household/<household_id>")
+def household(house_id):
+    house_id = ObjectId(house_id)
+    doc = db.householdData.find_one({"_id":house_id})
+    return render_template("household.html",household = doc)                              
+
 @app.route("/edit/<rest_id>",methods=["GET","POST"])
 def edit(rest_id):
     rest_id = ObjectId(rest_id)
@@ -189,43 +251,6 @@ def delete(rest_id):
 
 
 
-####################################################################################
-################################## FRIEND SECTION ##################################
-####################################################################################
-
-@app.route("/friends", methods=["GET", "POST"])
-@login_required
-def friends():
-    user = User.find_by_id(current_user.id) 
-    friends_list = user.get_friends()
-    search_query = request.args.get("searchUser", "").strip()
-    search_results = []
-    if search_query:
-        search_results = db.loginInfo.find(
-            {"username": {"$regex": search_query, "$options": "i"}}  # Case-insensitive search
-        )
-        search_results = [User(user) for user in search_results if str(user["_id"]) != current_user.id]  # Exclude self
-
-    return render_template("friends.html", friends=friends_list, search_results=search_results)
-
-@app.route("/add_friend/<friend_id>", methods=["POST"])
-@login_required
-def add_friend(friend_id):
-    user = User.find_by_id(current_user.id)
-    if user.add_friend(friend_id):
-        flash("Friend added successfully!", "success")
-    else:
-        flash("This user is already your friend.", "info")
-    return redirect(url_for("friends"))
-   
-@app.route("/remove_friend/<friend_id>", methods=["POST"])
-@login_required
-def remove_friend(friend_id):
-    user = User.find_by_id(current_user.id)
-    if user.remove_friend(friend_id):
-        flash("Friend removed successfully!", "success")
-    return redirect(url_for("friends"))
-import random
 ####################################################################################
 ################################# PROFILE SECTION ##################################
 ####################################################################################

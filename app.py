@@ -230,10 +230,12 @@ def household(household_id):
     house_id = ObjectId(household_id)
     doc = db.householdData.find_one({"_id":house_id})
     grocery_ids = doc.get("grocery",[])
-    pantry_ids = doc.get("grocery",[])
     grocery_list = list(db.groceryData.find({"_id":{"$in":grocery_ids}}))
+    pantry_ids = doc.get("pantry",[])
     pantry_list = list(db.pantryData.find({"_id":{"$in":pantry_ids}}))
-    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list)                              
+    username = flask_login.current_user.username
+    user = User.find_by_username(username)
+    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list, current_user_id = user.id)                              
 
 @app.route("/add-grocery/<household_id>", methods = ["POST"])
 @flask_login.login_required
@@ -279,7 +281,7 @@ def edit_grocery(household_id, grocery_id):
         db.groceryData.update_one({"_id":ObjectId(grocery_id)},{"$set":{"name":name,"note":note}})
         return redirect(url_for('household',household_id=house_id))
 
-@app.route("/edit-pantry/<houeshold_id>/<pantry_id>", methods=["POST"])
+@app.route("/edit-pantry/<household_id>/<pantry_id>", methods=["POST"])
 @flask_login.login_required
 def edit_pantry(household_id, pantry_id):
     if request.method == "POST":

@@ -31,9 +31,8 @@
               <a href="#" id="groceryAdd" onclick="openAddGrocery()">+</a>
             </div>
             <ul>
-              {% for item in grocery_list %}
-              <li class="groceryItem"
-data-id="{{ item._id }}"
+              {% for item in household.grocery %}
+              <li class="groceryItem" data-id="{{ item._id }}"
                 data-name="{{ item.name }}"
                 data-price="{{ item.price }}"
                 data-requester-id="{{ item.requester_id }}"
@@ -62,7 +61,7 @@ data-id="{{ item._id }}"
               <a href="#" id="pantryAdd" onclick="openAddPantry()">+</a>
             </div>
             <ul>
-              {% for item in pantry %}
+              {% for item in household.pantry %}
               <li>
                 {% if item.buyer_username %}
                   <div class="pantryBuyer">

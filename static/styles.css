@@ -470,18 +470,19 @@ ul {
     color: var(--button-text-color)
 }
 
+
 #householdName{
     background-color: var(--button-color);
     width: fit-content;
-    padding: 20px;
+    padding: 10px;
     margin-bottom: 20px;
     color: var(--text-color1);
     text-align: center;
     font-size: 26px;
     border: var(--button-text-color) solid 3px ;
-    border-radius: 10px;
-    
-
+    min-width: 300px;
+    font-size: 30px;
+    font-weight: bolder;
 }
 
 
@@ -489,11 +490,13 @@ ul {
     position: absolute;
     left: 70px;
 }
-.crossedOut span#item,
-.crossedOut span#price {
+.crossedOut span#item {
   text-decoration: line-through;
   opacity: 0.6;
   cursor:default;
+}
+.crossedOut span#price{
+    font-weight: bolder;
 }
 
 .pantryBuyer{

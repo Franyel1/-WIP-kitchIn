@@ -313,8 +313,7 @@ ul {
     width:100%;
     display: flex;
     align-items: center;
-   
-
+    padding-top: 10px;
 }
 #expiry, #requester{
     border-top: dashed 0.5px;
@@ -323,7 +322,7 @@ ul {
     text-align: center;
     margin-bottom: 10px;
 }
-#item{
+#item, #note{
     display: block;
     height: 40px;
     width: 50%;
@@ -331,15 +330,25 @@ ul {
     height: fit-content;
     margin-bottom: 20px;
     border-right: 0.5px dashed black; 
+    margin-top: 20px;
+    padding-left: 10px;
+}
+#note{
+    text-align: center;
 }
 
-#price, #quantity, #note{ 
+
+#price, #quantity{ 
     padding-top: 10px;
     display: block;
     height: 40px; 
     width:50%;
     text-align: center;
     margin-bottom: 20px;
+}
+#quantity{
+    margin-top: 10px;
+
 }
 
 #quantity{
@@ -351,7 +360,6 @@ ul {
     color: green;
     margin-bottom: 5px;
     padding: 5px;
-    padding-bottom: 10px;
     padding-top: 7px;
     padding-right: 7px;
     background-color: rgba(0, 0, 0, 0.035);
@@ -512,21 +520,18 @@ ul {
     position: absolute;
     left: 70px;
 }
-.crossedOut span#item {
+.crossedOut span#item, .crossedOut span#note {
   text-decoration: line-through;
   opacity: 0.6;
   cursor:default;
 }
-.crossedOut span#price{
-    font-weight: bolder;
-}
-
 .pantryBuyer{
     border-bottom: dashed 0.5px;
     padding-top: 15px; 
     text-align: center;
     width: 100%;
     position:relative;
+    padding-bottom: 20px;
 }
 
 
@@ -550,11 +555,20 @@ ul {
     color: var(--red);
     font-size: 20px;
     position: absolute;
-    top: -25px;
-    right: 0px;
+    top: -10px;
+    left: 0px;
     background-color: rgba(0, 0, 0, 0.165);
     padding: 7px;
     border-radius: 10px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    padding-top: 5px;
+
+}
+.itemRequestBadge span{
+    font-size: 25px;
+    line-height: 30px;
 }
 #pantryRequestBox, #groceryConfirmBox{
     color: var(--text-color1);

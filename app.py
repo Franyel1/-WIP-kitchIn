@@ -323,8 +323,8 @@ def create_request(household_id, pantry_id):
         house_id = ObjectId(household_id)
         amount = request.form['amount']
         note = request.form['note']
-        request = db.requestData.insert_one({'pantry_id':pantry_id,'household_id':house_id,'amount':amount,'note':note})
-        request_id = request.inserted_id
+        request_doc = db.requestData.insert_one({'pantry_id':pantry_id,'household_id':house_id,'amount':amount,'note':note})
+        request_id = request_doc.inserted_id
         db.householdData.update_one({"_id":house_id},{"$push":{"requests":request_id}})
         db.pantryData.update_one({"_id":pantry_id},{"$push":{"requests":request_id}})
         return redirect(url_for('household',household_id=household_id))

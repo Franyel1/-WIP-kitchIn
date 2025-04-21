@@ -233,9 +233,11 @@ def household(household_id):
     grocery_list = list(db.groceryData.find({"_id":{"$in":grocery_ids}}))
     pantry_ids = doc.get("pantry",[])
     pantry_list = list(db.pantryData.find({"_id":{"$in":pantry_ids}}))
+    request_ids = doc.get("requests",[])
+    request_list = list(db.requestData.find({"_id":{"$in":request_ids}}))
     username = flask_login.current_user.username
     user = User.find_by_username(username)
-    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list, current_user_id = user.id)                              
+    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list, current_user_id = user.id, requestList = request_list)                              
 
 @app.route("/add-grocery/<household_id>", methods = ["POST"])
 @flask_login.login_required
@@ -264,7 +266,7 @@ def add_pantry(household_id):
         user = User.find_by_username(username)
         owner_id = user.id
         owner = username
-        pantry = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date,'owner_id':owner_id, 'owner':owner})
+        pantry = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date,'owner_id':owner_id, 'owner':owner, 'requests':[]})
         pantry_id = pantry.inserted_id
         house_id = ObjectId(household_id)
         db.householdData.update_one({"_id":house_id},{"$push":{"pantry":pantry_id}})
@@ -319,6 +321,13 @@ def create_request(household_id, pantry_id):
     if request.method == "POST":
         pantry_id = ObjectId(pantry_id)
         house_id = ObjectId(household_id)
+        amount = request.form['amount']
+        note = request.form['note']
+        request = db.requestData.insert_one({'pantry_id':pantry_id,'household_id':house_id,'amount':amount,'note':note})
+        request_id = request.inserted_id
+        db.householdData.update_one({"_id":house_id},{"$push":{"requests":request_id}})
+        db.pantryData.update_one({"_id":pantry_id},{"$push":{"requests":request_id}})
+        return redirect(url_for('household',household_id=household_id))
         
 @app.route("/grocery-purchase/<household_id>/<grocery_id>",methods=["POST"])
 @flask_login.login_required
@@ -334,9 +343,12 @@ def grocery_purchase(household_id, grocery_id):
         name = grocery.get("name")
         quantity = request.form['quantity']
         exp_date = request.form['expiration']
-        pantry_item = db.pantryData.insert_one({'name':name, "quantity":quantity, "exp_date":exp_date})
+        requester_id = grocery.get("requester_id")
+        requester = grocery.get("requester")
+        pantry_item = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date,'owner_id':requester_id, 'owner':requester, 'requests':[]})
         db.householdData.update_one({"_id":house_id}, {'$push':{"pantry":pantry_item.inserted_id}})
         return redirect(url_for('household',household_id=household_id))
+    
 
 @app.route("/edit/<rest_id>",methods=["GET","POST"])
 def edit(rest_id):

@@ -25,36 +25,46 @@
 
       <div id="panels">
         <div id="groceryPanel">
-          <div id="grocery">
-            <div>
-              <h2>Grocery List</h2>
-              <a href="#" id="groceryAdd" onclick="openAddGrocery()">+</a>
-            </div>
-            <ul>
-              {% for item in groceryList %}
-              <li class="groceryItem" data-id="{{ item._id }}"
-                data-name="{{ item.name }}"
-                data-note="{{ item.note }}"
-                data-requester-id="{{ item.requester_id }}"
-                data-requester-name="{{ item.requester }}">
-                  <div id="listBox">
+            <div id="grocery">
+              <div>
+                <h2>Grocery List</h2>
+                <a href="#" id="groceryAdd" onclick="openAddGrocery()">+</a>
+              </div>
+              <ul>
+                {% for item in groceryList %}
+                <li class="groceryItem {% if item.purchased %}bought{% endif %}" 
+                    data-id="{{ item._id }}"
+                    data-name="{{ item.name }}"
+                    data-note="{{ item.note }}"
+                    data-requester-id="{{ item.requester_id }}"
+                    data-requester-name="{{ item.requester }}">
+                    {% if item.purchased %}
+                      <div class="purchasePrice">
+                        💰${{ item.price }}
+                      </div>
+                    {% endif %}
+                  
+                  <div id="listBox" class="{% if item.purchased %}crossedOut{% endif %}">
                     <span id="item">{{ item.name }}</span>
                     <span id="note">{{ item.note }}</span>
-                    {% if item.requester_id == current_user_id %}
-                    <form id="deleteForm-{{ item._id }}" method="POST" action="/delete-grocery/{{ household._id }}/{{ item._id }}">
-                        <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
+          
+                    
+                    {%  if item.requester_id == current_user_id %}
+                      <form class="deleteForm" id="deleteForm-{{ item._id }}" method="POST" action="/delete-grocery/{{ household._id }}/{{ item._id }}">
+                        <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
                         <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
-                    </form>
+                      </form>
                     {% endif %}
                   </div>
+          
                   <div id="requester">
-                      Requested by {{ item.requester }}
+                    Requested by {{ item.requester }} {% if item.purchased %} <br> Bought by {{ item.purchased_by_user }} {% endif %}
                   </div>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+        </div>          
       
         <div id="pantryPanel">
           <div id="pantry">
@@ -78,15 +88,17 @@
                   <span id="item">{{ item.name }}</span>
                   <span id="quantity">{{ item.quantity }}</span>
                   {% if item.owner_id == current_user_id %}
-                  <form id="deleteForm-{{ item._id }}" method="POST" action="/delete-pantry/{{ household._id }}/{{ item._id }}">
+                  <form id="deleteForm-{{ item._id }}" class="deleteForm" method="POST" action="/delete-pantry/{{ household._id }}/{{ item._id }}">
                     <a href="#" class="pantryEdit" data-id="{{ item._id }}">✎</a>
                     <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
                 </form>
                   {% endif %}
                 </div>
-                <div id="expiry">exp: {{ item.exp_date }}</div>
+                
+                <div id="expiry">{% if item.exp_date != '' %}Expires on {{ item.exp_date }} {% endif %}</div>
+                
                 {% if item.owner_id != current_user_id %}
-                  <a href="#" class="pantryRequest" data-id="{{ item._id }}" data-name="{{ item.name }}">✉</a>
+                    <a href="#" class="pantryRequest" data-id="{{ item._id }}" data-name="{{ item.name }}">✉</a>
                 {% endif %}
               </li>
             {% endfor %}
@@ -98,24 +110,21 @@
     <div id="back">
         <div id="pantryRequestBox" style="display:none;">
           <h3>Request From Pantry</h3>
-          <form id="requestPantryForm">
+          <form id="requestPantryForm" method="POST">
             <input type="hidden" id="requestPantryId">
             <p id="requestPromptText"></p>
             <div>
               <label>Amount:</label>
-              <input type="text" name="amount" class="reqBut"><br>
+              <input type="text" name="amount" class="reqBut" maxlength="15"><br>
             </div>
-            
             <div>
               <label>Note (optional):</label>
-              <input type="text" name="note"><br><br>
+              <input type="text" name="note" maxlength="50"><br><br>
             </div>
-            
             <div>
-              <button class="button reqBut"id="acceptButton" type="submit">Request</button>
-              <button class="button reqBut" type="button" id="cancelButton"onclick="closeRequestBox()">Cancel</button>
+              <button class="button reqBut" id="acceptButton" type="submit">Request</button>
+              <button class="button reqBut" type="button" id="cancelButton" onclick="closeRequestBox()">Cancel</button>
             </div>
-            
           </form>
       </div>
         <div id="groceryConfirmBox" style="display:none;">
@@ -126,19 +135,19 @@
 
             <div>
               <label>Price:</label>
-              <input type="text" id="confirmPrice" name="price" required><br>
+              <input type="text" id="confirmPrice" name="price" maxlength="10" required><br>
             </div>
 
             <div>
               
               <label>Quantity (optional):</label>
-              <input type="text" id="confirmQuantity" name="quantity"><br>
+              <input type="text" id="confirmQuantity" maxlength="20" name="quantity"><br>
             </div>
             
               
             <div>
               <label>Expiration Date (optional):</label>
-              <input type="text" id="confirmExpiry" name="expiry"><br><br>
+              <input type="text" id="confirmExpiry" maxlength="8" name="expiry"><br><br>
             </div>
             
             <div>
@@ -155,13 +164,13 @@
                     <input type="hidden" name="id" id="pantryItemId">
                   
                     <label for="editName">Name:</label>
-                    <input type="text" name="name" id="editName"><br><br>
+                    <input type="text" name="name" id="editName" maxlength="20"><br><br>
                   
                     <label for="editQuantity">Quantity:</label>
-                    <input type="text" name="quantity" id="editQuantity"><br><br>
+                    <input type="text" name="quantity" id="editQuantity" maxlength="15"><br><br>
                   
                     <label for="editExpiry">Expiration Date:</label>
-                    <input type="text" name="expiration" id="editExpiry"><br>
+                    <input type="text" name="expiration" id="editExpiry"maxlength="8"><br>
                   </div>
                 <button class="button"type="submit">Save</button>
                 <button class="button"type="button"id="cancelButton" onclick="closePantryEditBox()">Cancel</button>
@@ -174,10 +183,10 @@
                     <input type="hidden" name="id" id="groceryItemId">
                   
                     <label for="groceryEditName">Name:</label>
-                    <input type="text" name="name" id="groceryEditName"><br><br>
+                    <input type="text" name="name" id="groceryEditName"maxlength="20"><br><br>
 
                     <label for="groceryEditNote">Note:</label>
-                    <input type="text" name="note" id="groceryEditNote"><br><br>
+                    <input type="text" name="note" id="groceryEditNote"maxlength="50"><br><br>
                 
                 </div>
                 <button class="button" type="submit">Save</button>
@@ -191,10 +200,10 @@
             <form id="addGroceryForm" method="POST" action="/add-grocery/{{household._id}}">
               <div id="questions">
                 <label for="addGroceryName">Name:</label>
-                <input type="text" name="name" id="addGroceryName"><br><br>
+                <input type="text" name="name" id="addGroceryName"maxlength="20"><br><br>
 
                 <label for="addGroceryMessage">Note:</label>
-                <input type="text" name="note" id="addGroceryNote"><br><br>
+                <input type="text" name="note" id="addGroceryNote"maxlength="50"><br><br>
 
               </div>
               <button class="button" type="submit">Add</button>
@@ -206,13 +215,13 @@
             <form id="addPantryForm" method="POST" action="/add-pantry/{{household._id}}">
               <div id="questions2">
                 <label for="addPantryName">Name:</label>
-                <input type="text" name="name" id="addPantryName" required><br><br>
+                <input type="text" name="name" id="addPantryName" maxlength="20"required><br><br>
           
                 <label for="addPantryQuantity">Quantity:</label>
-                <input type="text" name="quantity" id="addPantryQuantity"><br><br>
+                <input type="text" name="quantity" id="addPantryQuantity" maxlength="15"><br><br>
           
                 <label for="addPantryExpiry">Expiration Date:</label>
-                <input type="text" name="expiration" id="addPantryExpiry"><br>
+                <input type="text" name="expiration" id="addPantryExpiry"maxlength="8"><br>
               </div>
               <button class="button" type="submit">Add</button>
               <button class="button" type="button"id="cancelButton"  onclick="closeAddPantry()">Cancel</button>
@@ -300,6 +309,86 @@ for (let i = 0; i < pantryEdits.length; i++) {
 
 
 }
+document.querySelectorAll('.pantryRequest').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const itemId = btn.dataset.id;
+    const itemName = btn.dataset.name;
+    const householdId = "{{ household._id }}"; // still available from the template
+
+    // Set form action
+    const form = document.getElementById('requestPantryForm');
+    form.action = `/create-request/${householdId}/${itemId}`;
+
+    // Optional: update prompt text
+    document.getElementById('requestPromptText').textContent = `Request some of "${itemName}"`;
+
+    // Show the request box
+    document.getElementById('back').style.display = 'flex';
+    document.getElementById('pantryRequestBox').style.display = 'flex';
+  });
+});
+document.querySelectorAll('.groceryItem').forEach(item => {
+  item.addEventListener('click', (e) => {
+    if (item.classList.contains('bought')) return;
+    if (e.target.closest('.groceryEdit') || e.target.closest('.deleteLink')) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const groceryId = item.dataset.id;
+    const name = item.dataset.name;
+
+    // Fill confirm modal fields
+    document.getElementById("confirmGroceryId").value = groceryId;
+    document.getElementById("confirmText").textContent = `Did you buy ${name}?`;
+
+    // Open confirm modal
+    document.getElementById("groceryConfirmBox").style.display = "flex";
+    document.getElementById("back").style.display = "flex";
+  });
+});
+
+document.getElementById('confirmBuyForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const id = document.getElementById('confirmGroceryId').value;
+  const price = document.getElementById('confirmPrice').value;
+  const quantity = document.getElementById('confirmQuantity').value;
+  const expiration = document.getElementById('confirmExpiry').value;
+
+  const li = document.querySelector(`.groceryItem[data-id="${id}"]`);
+  const listBox = li?.querySelector('#listBox');
+  const requesterDiv = li?.querySelector('#requester');
+
+  const requesterId = li?.dataset.requesterId;
+  const requesterName = li?.dataset.requesterName;
+
+  await fetch(`/grocery-purchase/{{ household._id }}/${id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ price, quantity, expiration })
+  });
+
+  // Update UI
+  const purchaseInfo = document.createElement('div');
+  purchaseInfo.className = 'purchasePrice';
+  listBox.appendChild(purchaseInfo);
+
+  listBox.classList.add('crossedOut');
+  li.classList.add('bought');
+  li.parentNode.appendChild(li);
+
+  const baseText = requesterDiv.textContent.split('·')[0].trim();
+  requesterDiv.textContent = `${baseText} · Bought by {{ current_user.username }}`;
+
+  location.reload();
+  closeConfirmBox();
+});
+
 
 function openAddGrocery() {
     document.getElementById("back").style.display = "flex";
@@ -344,53 +433,6 @@ document.querySelectorAll('.groceryItem').forEach(item => {
     document.getElementById('groceryConfirmBox').style.display = 'flex';
   });
 });
-
-
-document.getElementById('confirmBuyForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  e.stopPropagation();
-
-  const id = document.getElementById('confirmGroceryId').value;
-  const quantity = document.getElementById('confirmQuantity').value;
-  const expiration = document.getElementById('confirmExpiry').value;
-
-  const li = document.querySelector(`.groceryItem[data-id="${id}"]`);
-  const listBox = li?.querySelector('#listBox');
-  const requesterDiv = li?.querySelector('#requester');
-
-  const requesterId = selectedGroceryItem?.dataset.requesterId;
-  const requesterName = selectedGroceryItem?.dataset.requesterName;
-
-  await fetch('/move-to-pantry', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id,
-      quantity,
-      expiration,
-      new_owner_id: requesterId,
-      new_owner_name: requesterName
-    })
-  });
-  const price = document.getElementById('confirmPrice').value;
-  const priceSpan = li?.querySelector('#price');
-  if (priceSpan) {
-    priceSpan.textContent = `$${price}`;
-  }
-
-  // Visually cross out + move to bottom
-  listBox?.classList.add('crossedOut');
-  li?.classList.add('bought');
-  li.parentNode.appendChild(li);
-
-  // Update requester text
-  const baseText = requesterDiv.textContent.split('·')[0].trim();
-  requesterDiv.textContent = `${baseText} · Bought by ${currentUsername}`;
-
-
-  closeConfirmBox();
-});
-
 
 function closeRequestBox() {
   document.getElementById('pantryRequestBox').style.display = 'none';

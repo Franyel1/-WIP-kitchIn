@@ -312,31 +312,53 @@ ul {
 #listBox{
     width:100%;
     display: flex;
-    justify-content: space-around;
     align-items: center;
+   
 
 }
 #expiry, #requester{
-    border-top: solid 0.5px;
+    border-top: dashed 0.5px;
     padding-top: 15px;
     width: 100%;
     text-align: center;
+    margin-bottom: 10px;
 }
 #item{
     display: block;
-    padding-top: 10px;
     height: 40px;
     width: 50%;
-    text-align: center;
+    text-align: left;
+    height: fit-content;
+    margin-bottom: 20px;
+    border-right: 0.5px dashed black; 
 }
 
-#price, #quantity{ 
+#price, #quantity, #note{ 
     padding-top: 10px;
     display: block;
     height: 40px; 
     width:50%;
     text-align: center;
+    margin-bottom: 20px;
 }
+
+#quantity{
+    height: 20px; 
+    line-height: 20px;
+}
+.purchasePrice {
+    font-weight: bold;
+    color: green;
+    margin-bottom: 5px;
+    padding: 5px;
+    padding-bottom: 10px;
+    padding-top: 7px;
+    padding-right: 7px;
+    background-color: rgba(0, 0, 0, 0.035);
+    border-radius: 5px;
+    
+
+  }
 
 
 #pantryAdd,.reorderButton, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove{
@@ -500,13 +522,13 @@ ul {
 }
 
 .pantryBuyer{
-    border-bottom: solid 0.5px;
+    border-bottom: dashed 0.5px;
     padding-top: 15px; 
-    padding-bottom: 20px;
     text-align: center;
     width: 100%;
     position:relative;
 }
+
 
 .pantryRequest{
     background-color: var(--logo-color2);
@@ -868,3 +890,10 @@ input{
 .color-picker-circle input[type="radio"]:checked ~ .checkmark {
     display: block;
 }
+
+.deleteForm{
+    position:absolute;
+    top:10px;
+    right: 4px;
+}
+

@@ -4,6 +4,9 @@
     /* border: solid; */
     font-family: Lexend;
 }
+body{
+    padding-bottom: 20%;
+}
 
 :root {
     --primary-color: #628a56;
@@ -245,7 +248,7 @@ ul {
 
 /*/////////////householdpage///////////////////*/
 
-#householdScreen, #requestScreen{
+#householdScreen{
     background-color: var(--background-color);
     display: flex;
     flex-direction: column;
@@ -379,7 +382,7 @@ ul {
   }
 
 
-#pantryAdd,.reorderButton, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove{
+#pantryAdd,.reorderButton, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove, #requestRemove, .deny, .accept{
     line-height: 24px; 
     text-align: center;
     background-color: var(--primary-color);
@@ -393,7 +396,7 @@ ul {
     border: solid 1px
 
 }
-#groceryRemove, #pantryRemove{
+#groceryRemove, #pantryRemove, #requestRemove, .deny{
     background-color: var(--red);
     right: 10px;
     
@@ -402,14 +405,14 @@ ul {
     background-color: var(--blue);
     right: 40px;
 }
-#pantryAdd:hover,.reorderButton:hover, #groceryAdd:hover, #groceryRemove:hover, .groceryEdit:hover,.pantryEdit:hover,#pantryRemove:hover{
+#pantryAdd:hover,.reorderButton:hover, #groceryAdd:hover, #groceryRemove:hover, .groceryEdit:hover,.pantryEdit:hover,#pantryRemove:hover, #requestRemove:hover, .deny:hover, .accept:hover{
     text-decoration: none;
     background-color: var(--text-color1);
     color:var(--primary-color);
     cursor:pointer;
     transition: 0.3s ease;
 }
-#groceryRemove:hover,#pantryRemove:hover{
+#groceryRemove:hover,#pantryRemove:hover,#requestRemove:hover, .deny:hover{
     color:var(--red);
 }
 .groceryEdit:hover,.pantryEdit:hover{
@@ -925,3 +928,84 @@ input{
     right: 4px;
 }
 
+/********************Requests page************************/
+
+#requestScreen{
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding-top: 110px;
+}
+
+.requestList{
+    display: flex;
+    flex-direction: column;
+
+}
+.requestList li{
+    height: fit-content;
+    margin-bottom: 20px;
+    background-color: lightgray;
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    width: 800px;
+
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-left: black 20px solid;
+    font-size: 24px;
+    padding: 15px;
+
+    position: relative;
+}
+
+#reqHeader{
+    font-size: 28px;
+    font-weight: bolder;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.requestList li div{
+    margin-bottom: 5px;
+}
+
+#reqNote{
+    width: 60%;
+    text-align: left;
+}
+#requestRemove,.deny,.accept{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    line-height: 45px;
+    top: 45%;
+    right: 50px;
+    border: 2px solid;
+}
+#status{
+    text-align: right;
+    font-weight: lighter;
+    font-size: 22px;
+}
+
+#requestRemove, .deny, .accept{
+    top: 32%;
+    color: var(--text-color1);
+    text-align: center;
+    border: 2px solid;
+    font-weight: bolder;
+}
+#requestRemove{
+    top: 40%;
+}
+
+.accept{
+    right: 130px;
+}

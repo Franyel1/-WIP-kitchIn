@@ -41,7 +41,7 @@
     
 }
 #regSection{
-    height: 560px;
+    height: 600px;
 }
 
 #loginScreen,
@@ -57,6 +57,10 @@
 #regForm {
     display: flex;
     flex-direction: column;
+}
+
+#noAccount a{
+    text-decoration: underline;
 }
 
 h1 {
@@ -241,7 +245,7 @@ ul {
 
 /*/////////////householdpage///////////////////*/
 
-#householdScreen{
+#householdScreen, #requestScreen{
     background-color: var(--background-color);
     display: flex;
     flex-direction: column;
@@ -259,6 +263,10 @@ ul {
     transition: 0.3s ease;
     text-decoration: none;
     color:var(--logo-color2);
+}
+
+.clickable{
+    cursor:pointer;
 }
 
 #panels{
@@ -313,6 +321,8 @@ ul {
     width:100%;
     display: flex;
     align-items: center;
+}
+.extra{
     padding-top: 10px;
 }
 #expiry, #requester{
@@ -417,6 +427,8 @@ ul {
     flex-direction: column;
     align-items: center;
     font-size: 26px;
+    transform: scale(0.8);
+    animation: fadeInUp 0.5s ease-out forwards;
 }
 #pantryEditBox,#pantryAddBox, #pantryRequestBox, #groceryConfirmBox{
     width: 350px;
@@ -430,10 +442,11 @@ ul {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.4);
     justify-content: center;
     align-items: center;
     z-index: 999;
+    transition: 5s ease;
 }
 
 #questions{
@@ -499,6 +512,7 @@ ul {
 #groceryEditBox h3, #pantryEditBox h3, #pantryAddBox, #groceryAddBox{
     color: var(--button-text-color)
 }
+
 
 
 #householdName{

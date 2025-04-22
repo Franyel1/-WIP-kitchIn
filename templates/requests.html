@@ -9,13 +9,44 @@
     <link rel="stylesheet" href="../static/styles.css">
     <title>Requests</title>
 </head>
-<body>
+<body id="requestScreen">
     <div id="topBar">
         <h2>kitchIn</h2>
         <a href="{{ url_for('logout') }}" class="button" id="logout">
             Logout
         </a>
+        <a href="{{ url_for('household', household_id=household['_id']) }}" class="button" id="requests">
+            Household
+        </a>
     </div>
+    
+    
+    <ul id="requestGot" class="requestList">
+        <h1>Requests got:</h1>
+        {% for req in requestList %}
+            {% if req.owner_id == current_user_id %}
+                <li>
+                    {{ req.item_name }} <br>
+                    from: {{ req.requester_name }} <br>
+                    to: {{ req.owner_name }} <br>
+                    amount: {{ req.amount }} <br>
+                    note: {{ req.note }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+    <ul id="requestSent" class="requestList">
+        <h1>Requests sent:</h1>
+        {% for req in requestList %}
+            {% if req.requester_id == current_user_id %}
+                <li id="itemSent">
+                    {{ req.item_name }}, Owned by: {{ req.owner_name }}<br>
+                    amount: {{ req.amount }}<br>
+                    note: {{ req.note }}
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
     
     
 </body>

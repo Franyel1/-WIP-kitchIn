@@ -237,7 +237,21 @@ def household(household_id):
     request_list = list(db.requestData.find({"_id":{"$in":request_ids}}))
     username = flask_login.current_user.username
     user = User.find_by_username(username)
-    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list, current_user_id = user.id, requestList = request_list)                              
+    return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list, current_user_id = user.id, requestList = request_list)    
+
+@app.route('/requests/<household_id>')
+@flask_login.login_required
+def requests(household_id):
+    house_id = ObjectId(household_id)
+    doc = db.householdData.find_one({"_id": house_id})
+    request_ids = doc.get("requests", [])
+    request_list = list(db.requestData.find({"_id": {"$in": request_ids}}))
+    pantry_ids = doc.get("pantry",[])
+    pantry_list = list(db.pantryData.find({"_id":{"$in":pantry_ids}}))
+
+    username = flask_login.current_user.username
+    user = User.find_by_username(username)
+    return render_template("requests.html", household=doc,current_user_id = user.id, requestList = request_list, pantryList=pantry_list)                          
 
 @app.route("/add-grocery/<household_id>", methods = ["POST"])
 @flask_login.login_required
@@ -323,11 +337,35 @@ def create_request(household_id, pantry_id):
         house_id = ObjectId(household_id)
         amount = request.form['amount']
         note = request.form['note']
-        request_doc = db.requestData.insert_one({'pantry_id':pantry_id,'household_id':house_id,'amount':amount,'note':note})
+        user = User.find_by_username(flask_login.current_user.username)
+        requester_id = user.id
+        requester_name = user.username
+        pantry_item = db.pantryData.find_one({"_id": pantry_id})
+        if not pantry_item:
+            flash("Pantry item not found", "danger")
+            return redirect(url_for("household", household_id=household_id))
+
+        item_name = pantry_item.get("name")
+        owner_id = pantry_item.get("owner_id")
+        owner_name = pantry_item.get("owner")
+
+        request_doc = db.requestData.insert_one({
+            'item_id': pantry_id,
+            'household_id': house_id,
+            'amount': amount,
+            'note': note,
+            'requester_id': requester_id,
+            'requester_name': requester_name,
+            'item_name': item_name,
+            'owner_id': owner_id,
+            'owner_name': owner_name
+        })
+
         request_id = request_doc.inserted_id
-        db.householdData.update_one({"_id":house_id},{"$push":{"requests":request_id}})
-        db.pantryData.update_one({"_id":pantry_id},{"$push":{"requests":request_id}})
-        return redirect(url_for('household',household_id=household_id))
+        db.householdData.update_one({"_id": house_id}, {"$push": {"requests": request_id}})
+        db.pantryData.update_one({"_id": pantry_id}, {"$push": {"requests": request_id}})
+
+        return redirect(url_for('household', household_id=household_id))
         
 @app.route("/grocery-purchase/<household_id>/<grocery_id>",methods=["POST"])
 @flask_login.login_required
@@ -348,41 +386,9 @@ def grocery_purchase(household_id, grocery_id):
         pantry_item = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date,'owner_id':requester_id, 'owner':requester, 'requests':[]})
         db.householdData.update_one({"_id":house_id}, {'$push':{"pantry":pantry_item.inserted_id}})
         return redirect(url_for('household',household_id=household_id))
-    
-
-@app.route("/edit/<rest_id>",methods=["GET","POST"])
-def edit(rest_id):
-    rest_id = ObjectId(rest_id)
-    if request.method=="GET":
-        restaurant = db.restaurantData.find_one({'_id':rest_id})
-        print(restaurant)
-        return render_template("edit.html",restaurant=restaurant)
-    if request.method=="POST":
-        doc = {item: request.form[item] for item in request.form}
-        doc['user_id'] = flask_login.current_user.username
-        db.restaurantData.update_one({'_id':rest_id},{"$set":doc})
-        return redirect("/home")
-
-@app.route("/delete/<rest_id>")
-def delete(rest_id):
-    rest_id = ObjectId(rest_id)
-    db.restaurantData.delete_one({'_id':rest_id})
-    return redirect("/home")
 
 
-
-####################################################################################
-################################# PROFILE SECTION ##################################
-####################################################################################
-
-@app.route("/profile/<friend_id>", methods=["GET"])
-def profile(friend_id):
-    if request.method=="GET":
-        friend_id = ObjectId(friend_id)
-        username = db.loginInfo.find_one({"_id":friend_id})['username']
-        restaurants = db.restaurantData.find({"user_id":username})
-        return render_template("profile.html",friendName=username,restaurants=restaurants)
-
+#remove user from household function needed
 
 # Run the app
 if __name__ == "__main__":

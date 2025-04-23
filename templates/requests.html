@@ -11,7 +11,7 @@
 </head>
 <body id="requestScreen">
     <div id="topBar">
-        <h2>kitchIn</h2>
+        <h2><a id='logo' href="{{ url_for('home') }}">kitchIn</a></h2>
         <a href="{{ url_for('logout') }}" class="button" id="logout">
             Logout
         </a>
@@ -56,8 +56,8 @@
                             <div >{{ req.item_name }} owned by {{ req.owner_name }}</div>
                             <span id="status">Status: pending...</span>
                         </div>
-                        <div id="reqAmount">amount: {{ req.amount }}</div>
-                        <div id="reqNote">note: {{ req.note }}</div>
+                        <div id="reqAmount"><b>Amount: </b>{{ req.amount }}</div>
+                        <div id="reqNote"><b>Note: </b>{{ req.note }}</div>
                         <form class="deleteReqForm" id="deleteForm-{{ req._id }}" method="POST" action="/delete-request/{{ household._id }}/{{ req._id }}">
                             <a href="#" onclick="event.stopPropagation();document.getElementById('deleteReqForm-{{ req._id }}').submit(); return false;" class="deleteLink" id="requestRemove">-</a>
                         </form>

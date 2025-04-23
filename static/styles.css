@@ -535,7 +535,7 @@ ul {
 
 #requests{
     position: absolute;
-    left: 70px;
+    left: 5%;
 }
 .crossedOut span#item, .crossedOut span#note {
   text-decoration: line-through;
@@ -936,7 +936,7 @@ input{
     flex-direction: column;
     align-items: center;
     font-family: Arial, sans-serif;
-    text-align: center;
+
     padding-top: 110px;
 }
 
@@ -948,15 +948,16 @@ input{
 .requestList li{
     height: fit-content;
     margin-bottom: 20px;
-    background-color: lightgray;
+    background-color: var(--top-bar-color);
     display: flex;
     flex-direction: column;
     align-items: baseline;
     width: 800px;
+    color: var(--text-color1);
 
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
-    border-left: black 20px solid;
+    border-left: var(--logo-color2) 20px solid;
     font-size: 24px;
     padding: 15px;
 
@@ -993,10 +994,18 @@ input{
     text-align: right;
     font-weight: lighter;
     font-size: 22px;
+    text-wrap: nowrap;
+    background-color: white;
+    height: min-content;
+    padding: 10px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    line-height: 19px;
+    color: var(--top-bar-color)
 }
 
 #requestRemove, .deny, .accept{
-    top: 32%;
+    top: 40%;
     color: var(--text-color1);
     text-align: center;
     border: 2px solid;
@@ -1008,4 +1017,41 @@ input{
 
 .accept{
     right: 130px;
+}
+.reqBlock{
+    width: 100%;
+    
+}
+.reqBlock li{
+    margin-left: 20%;
+}
+
+.reqBlock h1{
+    color: var(--top-bar-color);
+    text-align: left;
+    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.243);
+    padding: 10px;
+    width: 270px;
+
+    margin-left: 20%;
+    border-radius: 5px; 
+}
+
+.reqBlock{
+    transform: scale(0.6);
+    transform-origin: top left;
+}
+
+@media (min-width: 900px) {
+    #requestScreen {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+}
+
+#panels, #householdName{
+    transform: scale(0.7);
+    transform-origin: top center;
 }

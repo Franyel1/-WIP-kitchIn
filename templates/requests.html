@@ -55,7 +55,7 @@
                         <li>
                             <div id="reqHeader">
                                 <div >{{ req.item_name }} owned by {{ req.owner_name }}</div>
-                                <span id="status">Status: {{ req.status }}</span>
+                                <span id="status" class="{{req.status}}">Status: {{ req.status }}</span>
                             </div>
                             <div id="reqAmount"><b>Amount: </b>{{ req.amount }}</div>
                             <div id="reqNote"><b>Note: </b>{{ req.note }}</div>

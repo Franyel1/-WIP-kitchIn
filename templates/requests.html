@@ -19,53 +19,55 @@
             Household
         </a>
     </div>
-    <div class="reqBlock">
-        <h1>Requests got:</h1>
-        <ul id="requestGot" class="requestList">
-            {% for req in requestList %}
-                {% if req.owner_id == current_user_id and req.status == "pending" %}
-                    <li>
-                        <div id="reqHeader">{{ req.item_name }} from {{ req.requester_name }}</div> 
-                        {%if req.amount != ''%}<div id="reqAmount"><b>Amount</b>: {{ req.amount }}</div> {%endif%}
-                        <div id="reqNote"><b>Note:</b> {{ req.note }}</div>
+    <div id="requestLists">
+        <div class="reqBlock">
+            <h1>Requests got:</h1>
+            <ul id="requestGot" class="requestList">
+                {% for req in requestList %}
+                    {% if req.owner_id == current_user_id and req.status == "pending" %}
+                        <li>
+                            <div id="reqHeader">{{ req.item_name }} from {{ req.requester_name }}</div> 
+                            {%if req.amount != ''%}<div id="reqAmount"><b>Amount</b>: {{ req.amount }}</div> {%endif%}
+                            <div id="reqNote"><b>Note:</b> {{ req.note }}</div>
 
-                        <form class="respondReqForm" id="acceptForm-{{ req._id }}" method="POST" action="/respond-request/{{ household._id }}/{{ req._id }}">
-                            <input type="hidden" name="action" value="accept">
-                            <a href="#" onclick="event.stopPropagation();document.getElementById('acceptForm-{{ req._id }}').submit(); return false;" class="accept">✓</a>
-                          </form>
+                            <form class="respondReqForm" id="acceptForm-{{ req._id }}" method="POST" action="/respond-request/{{ household._id }}/{{ req._id }}">
+                                <input type="hidden" name="action" value="accept">
+                                <a href="#" onclick="event.stopPropagation();document.getElementById('acceptForm-{{ req._id }}').submit(); return false;" class="accept">✓</a>
+                            </form>
+                            
+                            <form class="respondReqForm" id="denyForm-{{ req._id }}" method="POST" action="/respond-request/{{ household._id }}/{{ req._id }}">
+                                <input type="hidden" name="action" value="deny">
+                                <a href="#" onclick="event.stopPropagation();document.getElementById('denyForm-{{ req._id }}').submit(); return false;" class="deny">✗</a>
+                            </form>
+                    
+                        </li>
                         
-                          <form class="respondReqForm" id="denyForm-{{ req._id }}" method="POST" action="/respond-request/{{ household._id }}/{{ req._id }}">
-                            <input type="hidden" name="action" value="deny">
-                            <a href="#" onclick="event.stopPropagation();document.getElementById('denyForm-{{ req._id }}').submit(); return false;" class="deny">✗</a>
-                          </form>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="reqBlock">
+            <h1>Requests sent:</h1>
+            <ul id="requestSent" class="requestList">
                 
-                    </li>
-                    
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="reqBlock">
-        <h1>Requests sent:</h1>
-        <ul id="requestSent" class="requestList">
-            
-            {% for req in requestList %}
-                {% if req.requester_id == current_user_id %}
-                    <li>
-                        <div id="reqHeader">
-                            <div >{{ req.item_name }} owned by {{ req.owner_name }}</div>
-                            <span id="status">Status: {{ req.status }}</span>
-                        </div>
-                        <div id="reqAmount"><b>Amount: </b>{{ req.amount }}</div>
-                        <div id="reqNote"><b>Note: </b>{{ req.note }}</div>
-                        <form class="deleteReqForm" id="deleteForm-{{ req._id }}" method="POST" action="/delete-request/{{ household._id }}/{{ req._id }}">
-                            <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ req._id }}').submit(); return false;" class="deleteLink" id="requestRemove">-</a>
-                        </form>
-                    </li>
-                    
-                {% endif %}
-            {% endfor %}
-        </ul>
+                {% for req in requestList %}
+                    {% if req.requester_id == current_user_id %}
+                        <li>
+                            <div id="reqHeader">
+                                <div >{{ req.item_name }} owned by {{ req.owner_name }}</div>
+                                <span id="status">Status: {{ req.status }}</span>
+                            </div>
+                            <div id="reqAmount"><b>Amount: </b>{{ req.amount }}</div>
+                            <div id="reqNote"><b>Note: </b>{{ req.note }}</div>
+                            <form class="deleteReqForm" id="deleteForm-{{ req._id }}" method="POST" action="/delete-request/{{ household._id }}/{{ req._id }}">
+                                <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ req._id }}').submit(); return false;" class="deleteLink" id="requestRemove">-</a>
+                            </form>
+                        </li>
+                        
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
     </div>
     
 </body>

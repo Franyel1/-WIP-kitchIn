@@ -5,7 +5,7 @@
     font-family: Lexend;
 }
 body{
-    padding-bottom: 20%;
+    padding-bottom: 100px;
 }
 
 :root {
@@ -450,6 +450,9 @@ ul {
     align-items: center;
     z-index: 999;
     transition: 5s ease;
+}
+#confirmPrice{
+    margin-left: auto;
 }
 
 #questions{
@@ -936,7 +939,6 @@ input{
     flex-direction: column;
     align-items: center;
     font-family: Arial, sans-serif;
-
     padding-top: 110px;
 }
 
@@ -1020,10 +1022,6 @@ input{
 }
 .reqBlock{
     width: 100%;
-    
-}
-.reqBlock li{
-    margin-left: 20%;
 }
 
 .reqBlock h1{
@@ -1033,20 +1031,24 @@ input{
     background-color: rgba(255, 255, 255, 0.243);
     padding: 10px;
     width: 270px;
-
-    margin-left: 20%;
     border-radius: 5px; 
+    margin-left: -3px;
 }
 
-.reqBlock{
+
+#requestLists{
     transform: scale(0.6);
-    transform-origin: top left;
+    transform-origin: top center;
+    display: flex;
+    flex-direction: column;
 }
 
 @media (min-width: 900px) {
-    #requestScreen {
+    #requestLists {
         flex-direction: row;
-        justify-content: space-around;
+    }
+    .reqBlock{
+        margin: 50px;
     }
 
 }
@@ -1055,3 +1057,5 @@ input{
     transform: scale(0.7);
     transform-origin: top center;
 }
+
+

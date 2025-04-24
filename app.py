@@ -145,6 +145,29 @@ def create_household():
             {"$push": {"households": name}}
         )
         return redirect("/home")
+
+@app.route("/leave-household/<household_id>", methods=["POST"])
+@flask_login.login_required
+def leave_household(household_id):
+    household_id = ObjectId(household_id)
+    user = db.loginInfo.find_one({"_id": ObjectId(current_user.id)})
+    username = user["username"]
+
+    # Remove user from the household's member list
+    db.householdData.update_one(
+        {"_id": household_id},
+        {"$pull": {"members": username}}
+    )
+
+    # Remove the household name from user's household list
+    household = db.householdData.find_one({"_id": household_id})
+    if household:
+        db.loginInfo.update_one(
+            {"_id": ObjectId(current_user.id)},
+            {"$pull": {"households": household["name"]}}
+        )
+
+    return redirect(url_for("home"))
             
 def generate_code():
     letters = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890'

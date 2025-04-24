@@ -1058,6 +1058,21 @@ input{
     transform-origin: top center;
 }
 
+.accepted{
+    background-color: var(--primary-color)!important;
+    color: white !important;
+}
+
+.denied{
+    background-color: var(--red)!important;
+    color: white !important;
+}
+
+.pending{
+    background-color: var(--button-text-color)!important;
+    color: white !important;
+}
+
 .optionsMenu {
     position: relative;
     display: inline-block;

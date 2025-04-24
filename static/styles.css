@@ -4,6 +4,9 @@
     /* border: solid; */
     font-family: Lexend;
 }
+body{
+    padding-bottom: 20%;
+}
 
 :root {
     --primary-color: #628a56;
@@ -41,7 +44,7 @@
     
 }
 #regSection{
-    height: 560px;
+    height: 600px;
 }
 
 #loginScreen,
@@ -57,6 +60,10 @@
 #regForm {
     display: flex;
     flex-direction: column;
+}
+
+#noAccount a{
+    text-decoration: underline;
 }
 
 h1 {
@@ -261,6 +268,10 @@ ul {
     color:var(--logo-color2);
 }
 
+.clickable{
+    cursor:pointer;
+}
+
 #panels{
     display: flex;
     justify-content: space-between;
@@ -313,8 +324,9 @@ ul {
     width:100%;
     display: flex;
     align-items: center;
-   
-
+}
+.extra{
+    padding-top: 10px;
 }
 #expiry, #requester{
     border-top: dashed 0.5px;
@@ -323,7 +335,7 @@ ul {
     text-align: center;
     margin-bottom: 10px;
 }
-#item{
+#item, #note{
     display: block;
     height: 40px;
     width: 50%;
@@ -331,15 +343,25 @@ ul {
     height: fit-content;
     margin-bottom: 20px;
     border-right: 0.5px dashed black; 
+    margin-top: 20px;
+    padding-left: 10px;
+}
+#note{
+    text-align: center;
 }
 
-#price, #quantity, #note{ 
+
+#price, #quantity{ 
     padding-top: 10px;
     display: block;
     height: 40px; 
     width:50%;
     text-align: center;
     margin-bottom: 20px;
+}
+#quantity{
+    margin-top: 10px;
+
 }
 
 #quantity{
@@ -351,7 +373,6 @@ ul {
     color: green;
     margin-bottom: 5px;
     padding: 5px;
-    padding-bottom: 10px;
     padding-top: 7px;
     padding-right: 7px;
     background-color: rgba(0, 0, 0, 0.035);
@@ -361,7 +382,7 @@ ul {
   }
 
 
-#pantryAdd,.reorderButton, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove{
+#pantryAdd,.reorderButton, #groceryAdd, #groceryRemove, .groceryEdit,.pantryEdit,#pantryRemove, #requestRemove, .deny, .accept{
     line-height: 24px; 
     text-align: center;
     background-color: var(--primary-color);
@@ -375,7 +396,7 @@ ul {
     border: solid 1px
 
 }
-#groceryRemove, #pantryRemove{
+#groceryRemove, #pantryRemove, #requestRemove, .deny{
     background-color: var(--red);
     right: 10px;
     
@@ -384,14 +405,14 @@ ul {
     background-color: var(--blue);
     right: 40px;
 }
-#pantryAdd:hover,.reorderButton:hover, #groceryAdd:hover, #groceryRemove:hover, .groceryEdit:hover,.pantryEdit:hover,#pantryRemove:hover{
+#pantryAdd:hover,.reorderButton:hover, #groceryAdd:hover, #groceryRemove:hover, .groceryEdit:hover,.pantryEdit:hover,#pantryRemove:hover, #requestRemove:hover, .deny:hover, .accept:hover{
     text-decoration: none;
     background-color: var(--text-color1);
     color:var(--primary-color);
     cursor:pointer;
     transition: 0.3s ease;
 }
-#groceryRemove:hover,#pantryRemove:hover{
+#groceryRemove:hover,#pantryRemove:hover,#requestRemove:hover, .deny:hover{
     color:var(--red);
 }
 .groceryEdit:hover,.pantryEdit:hover{
@@ -409,6 +430,8 @@ ul {
     flex-direction: column;
     align-items: center;
     font-size: 26px;
+    transform: scale(0.8);
+    animation: fadeInUp 0.5s ease-out forwards;
 }
 #pantryEditBox,#pantryAddBox, #pantryRequestBox, #groceryConfirmBox{
     width: 350px;
@@ -422,10 +445,11 @@ ul {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.4);
     justify-content: center;
     align-items: center;
     z-index: 999;
+    transition: 5s ease;
 }
 
 #questions{
@@ -493,6 +517,7 @@ ul {
 }
 
 
+
 #householdName{
     background-color: var(--button-color);
     width: fit-content;
@@ -510,23 +535,20 @@ ul {
 
 #requests{
     position: absolute;
-    left: 70px;
+    left: 5%;
 }
-.crossedOut span#item {
+.crossedOut span#item, .crossedOut span#note {
   text-decoration: line-through;
   opacity: 0.6;
   cursor:default;
 }
-.crossedOut span#price{
-    font-weight: bolder;
-}
-
 .pantryBuyer{
     border-bottom: dashed 0.5px;
     padding-top: 15px; 
     text-align: center;
     width: 100%;
     position:relative;
+    padding-bottom: 20px;
 }
 
 
@@ -550,11 +572,20 @@ ul {
     color: var(--red);
     font-size: 20px;
     position: absolute;
-    top: -25px;
-    right: 0px;
+    top: -10px;
+    left: 0px;
     background-color: rgba(0, 0, 0, 0.165);
     padding: 7px;
     border-radius: 10px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    padding-top: 5px;
+
+}
+.itemRequestBadge span{
+    font-size: 25px;
+    line-height: 30px;
 }
 #pantryRequestBox, #groceryConfirmBox{
     color: var(--text-color1);
@@ -897,3 +928,130 @@ input{
     right: 4px;
 }
 
+/********************Requests page************************/
+
+#requestScreen{
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+
+    padding-top: 110px;
+}
+
+.requestList{
+    display: flex;
+    flex-direction: column;
+
+}
+.requestList li{
+    height: fit-content;
+    margin-bottom: 20px;
+    background-color: var(--top-bar-color);
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    width: 800px;
+    color: var(--text-color1);
+
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-left: var(--logo-color2) 20px solid;
+    font-size: 24px;
+    padding: 15px;
+
+    position: relative;
+}
+
+#reqHeader{
+    font-size: 28px;
+    font-weight: bolder;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.requestList li div{
+    margin-bottom: 5px;
+}
+
+#reqNote{
+    width: 60%;
+    text-align: left;
+}
+#requestRemove,.deny,.accept{
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    line-height: 45px;
+    top: 45%;
+    right: 50px;
+    border: 2px solid;
+}
+#status{
+    text-align: right;
+    font-weight: lighter;
+    font-size: 22px;
+    text-wrap: nowrap;
+    background-color: white;
+    height: min-content;
+    padding: 10px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    line-height: 19px;
+    color: var(--top-bar-color)
+}
+
+#requestRemove, .deny, .accept{
+    top: 40%;
+    color: var(--text-color1);
+    text-align: center;
+    border: 2px solid;
+    font-weight: bolder;
+}
+#requestRemove{
+    top: 40%;
+}
+
+.accept{
+    right: 130px;
+}
+.reqBlock{
+    width: 100%;
+    
+}
+.reqBlock li{
+    margin-left: 20%;
+}
+
+.reqBlock h1{
+    color: var(--top-bar-color);
+    text-align: left;
+    text-decoration: underline;
+    background-color: rgba(255, 255, 255, 0.243);
+    padding: 10px;
+    width: 270px;
+
+    margin-left: 20%;
+    border-radius: 5px; 
+}
+
+.reqBlock{
+    transform: scale(0.6);
+    transform-origin: top left;
+}
+
+@media (min-width: 900px) {
+    #requestScreen {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+}
+
+#panels, #householdName{
+    transform: scale(0.7);
+    transform-origin: top center;
+}

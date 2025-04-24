@@ -15,7 +15,7 @@
         <a href="{{ url_for('logout') }}" class="button" id="logout">
             Logout
         </a>
-        <a href="requests.html" class="button" id="requests">
+        <a href="/requests/{{household._id}}" class="button" id="requests">
             Requests
         </a>
 
@@ -32,7 +32,7 @@
               </div>
               <ul>
                 {% for item in groceryList %}
-                <li class="groceryItem {% if item.purchased %}bought{% endif %}" 
+                <li class="groceryItem {% if item.purchased %}bought{% endif %} {%  if item.requester_id != current_user_id %}clickable{%endif%}" 
                     data-id="{{ item._id }}"
                     data-name="{{ item.name }}"
                     data-note="{{ item.note }}"
@@ -44,7 +44,7 @@
                       </div>
                     {% endif %}
                   
-                  <div id="listBox" class="{% if item.purchased %}crossedOut{% endif %}">
+                  <div id="listBox" class="{% if item.purchased %}crossedOut{%else%} extra {% endif %}">
                     <span id="item">{{ item.name }}</span>
                     <span id="note">{{ item.note }}</span>
           
@@ -58,7 +58,7 @@
                   </div>
           
                   <div id="requester">
-                    Requested by {{ item.requester }} {% if item.purchased %} <br> Bought by {{ item.purchased_by_user }} {% endif %}
+                    Requested by <b>{{ item.requester }}</b> {% if item.purchased %} <br> Bought by <b>{{ item.purchased_by_user }}</b> {% endif %}
                   </div>
                 </li>
                 {% endfor %}
@@ -75,11 +75,11 @@
             <ul>
               {% for item in pantryList %}
               <li>
-                {% if item.buyer_username %}
+                {% if item.owner %}
                   <div class="pantryBuyer">
-                    Bought by: {{ item.buyer_username }}
-                    {% if item.owner_id == current_user_id and item.request_count > 0 %}
-                      <span class="itemRequestBadge">📥 {{ item.request_count }}</span>
+                    Owner: {{ item.owner }}
+                    {% if item.owner_id == current_user_id and item.requests|length > 0 %}
+                      <span class="itemRequestBadge"><span>📥</span> {{ item.requests|length }}</span>
                     {% endif %}
                   </div>
                   
@@ -95,7 +95,7 @@
                   {% endif %}
                 </div>
                 
-                <div id="expiry">{% if item.exp_date != '' %}Expires on {{ item.exp_date }} {% endif %}</div>
+                <div id="expiry">{% if item.exp_date != '' %}Best by {{ item.exp_date }} {% endif %}</div>
                 
                 {% if item.owner_id != current_user_id %}
                     <a href="#" class="pantryRequest" data-id="{{ item._id }}" data-name="{{ item.name }}">✉</a>
@@ -147,7 +147,7 @@
               
             <div>
               <label>Expiration Date (optional):</label>
-              <input type="text" id="confirmExpiry" maxlength="8" name="expiry"><br><br>
+              <input type="text" id="confirmExpiry" maxlength="12" name="expiry"><br><br>
             </div>
             
             <div>
@@ -170,7 +170,7 @@
                     <input type="text" name="quantity" id="editQuantity" maxlength="15"><br><br>
                   
                     <label for="editExpiry">Expiration Date:</label>
-                    <input type="text" name="expiration" id="editExpiry"maxlength="8"><br>
+                    <input type="text" name="expiration" id="editExpiry"maxlength="12"><br>
                   </div>
                 <button class="button"type="submit">Save</button>
                 <button class="button"type="button"id="cancelButton" onclick="closePantryEditBox()">Cancel</button>
@@ -221,7 +221,7 @@
                 <input type="text" name="quantity" id="addPantryQuantity" maxlength="15"><br><br>
           
                 <label for="addPantryExpiry">Expiration Date:</label>
-                <input type="text" name="expiration" id="addPantryExpiry"maxlength="8"><br>
+                <input type="text" name="expiration" id="addPantryExpiry"maxlength="12"><br>
               </div>
               <button class="button" type="submit">Add</button>
               <button class="button" type="button"id="cancelButton"  onclick="closeAddPantry()">Cancel</button>
@@ -453,22 +453,6 @@ document.querySelectorAll('.pantryRequest').forEach(btn => {
   });
 });
 
-document.getElementById('requestPantryForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  e.stopPropagation();
-
-  const id = document.getElementById('requestPantryId').value;
-  const amount = this.amount.value;
-  const note = this.note.value;
-
-  await fetch('/request-pantry', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, amount, note })
-  });
-
-  closeRequestBox();
-});
 
 
 </script>

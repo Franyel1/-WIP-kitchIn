@@ -49,11 +49,19 @@
                     <span id="note">{{ item.note }}</span>
           
                     
-                    {%  if item.requester_id == current_user_id %}
-                      <form class="deleteForm" id="deleteForm-{{ item._id }}" method="POST" action="/delete-grocery/{{ household._id }}/{{ item._id }}">
-                        <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
-                        <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
-                      </form>
+                    {% if item.purchased %}
+                      {% if item.purchased_by_id == current_user_id %}
+                        <form class="deleteForm" id="deleteForm-{{ item._id }}" method="POST" action="/delete-grocery/{{ household._id }}/{{ item._id }}">
+                          <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
+                        </form>
+                      {% endif %}
+                    {% else %}
+                      {% if item.requester_id == current_user_id %}
+                        <form class="deleteForm" id="deleteForm-{{ item._id }}" method="POST" action="/delete-grocery/{{ household._id }}/{{ item._id }}">
+                          <a href="#" class="groceryEdit" data-id="{{ item._id }}">✎</a>
+                          <a href="#" onclick="event.stopPropagation();document.getElementById('deleteForm-{{ item._id }}').submit(); return false;" class="deleteLink" id="pantryRemove">-</a>
+                        </form>
+                      {% endif %}
                     {% endif %}
                   </div>
           

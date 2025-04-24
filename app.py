@@ -326,6 +326,33 @@ def create_request(household_id, pantry_id):
 
         return redirect(url_for('household', household_id=household_id))
     
+@app.route("/delete-request/<household_id>/<request_id>", methods=["POST"])
+@flask_login.login_required
+def delete_request(household_id, request_id):
+    request_obj = db.requestData.find_one({"_id": ObjectId(request_id)})
+
+    if not request_obj:
+        flash("Request not found.", "danger")
+        return redirect(url_for("requests", household_id=household_id))
+
+    # Remove from household's list
+    db.householdData.update_one(
+        {"_id": ObjectId(household_id)},
+        {"$pull": {"requests": ObjectId(request_id)}}
+    )
+
+    # Remove from pantry's request list
+    db.pantryData.update_one(
+        {"_id": request_obj["item_id"]},
+        {"$pull": {"requests": ObjectId(request_id)}}
+    )
+
+    # Finally delete the request
+    db.requestData.delete_one({"_id": ObjectId(request_id)})
+
+    flash("Request deleted successfully.", "success")
+    return redirect(url_for("requests", household_id=household_id))
+
 @app.route("/respond-request/<household_id>/<request_id>", methods=["POST"])
 @flask_login.login_required
 def respond_request(household_id, request_id):

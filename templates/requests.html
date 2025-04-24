@@ -23,7 +23,7 @@
         <h1>Requests got:</h1>
         <ul id="requestGot" class="requestList">
             {% for req in requestList %}
-                {% if req.owner_id == current_user_id %}
+                {% if req.owner_id == current_user_id and req.status == "pending" %}
                     <li>
                         <div id="reqHeader">{{ req.item_name }} from {{ req.requester_name }}</div> 
                         {%if req.amount != ''%}<div id="reqAmount"><b>Amount</b>: {{ req.amount }}</div> {%endif%}

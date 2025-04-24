@@ -1073,4 +1073,77 @@ input{
     color: white !important;
 }
 
+.optionsMenu {
+    position: relative;
+    display: inline-block;
+    margin-left: 10px;
+}
 
+.dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 1000;
+}
+
+.dropdown button {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown button:hover {
+    background-color: #f0f0f0;
+}
+
+.householdContainer {
+    position: relative;
+}
+
+.householdOptions {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.optionsButton {
+    background: none;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 30px;
+    background-color: white;
+    border: 1px solid #ccc;
+    z-index: 1000;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 4px 0;
+}
+
+.dropdown button {
+    background: none;
+    border: none;
+    padding: 8px 14px;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+    color: black;
+}
+
+.dropdown button:hover {
+    background-color: #f0f0f0;
+}

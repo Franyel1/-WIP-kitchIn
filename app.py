@@ -70,35 +70,6 @@ class User(flask_login.UserMixin):
             "households": []
         })
         return True
-    
-    def get_friends(self):
-        """Retrieve the user's friends as User objects."""
-        friend_ids = [ObjectId(fid) for fid in self.friends]
-        friends_data = db.loginInfo.find({"_id": {"$in": friend_ids}})
-        return [User(friend) for friend in friends_data]
-
-    def add_friend(self, friend_id):
-        """Add a friend using ObjectId reference."""
-        friend_id = ObjectId(friend_id)
-        if friend_id not in self.friends:
-            db.loginInfo.update_one(
-                {"_id": ObjectId(self.id)},
-                {"$push": {"friends": friend_id}}
-            )
-            return True
-        return False
-
-    def remove_friend(self, friend_id):
-        """Remove a friend using ObjectId reference."""
-        friend_id = ObjectId(friend_id)
-        if friend_id in self.friends:
-            db.loginInfo.update_one(
-                {"_id": ObjectId(self.id)},
-                {"$pull": {"friends": friend_id}}
-            )
-            return True
-        return False
-
 
 # Flask-Login user loader
 @login_manager.user_loader
@@ -210,19 +181,6 @@ def logout():
     flask_login.logout_user()
     flash("Logged out successfully", "success")
     return redirect(url_for("login"))
-
-
-@app.route("/add", methods=["GET","POST"])
-@flask_login.login_required
-def add():
-    if request.method == "POST":
-        doc = {}
-        for item in request.form:
-            doc[item] = request.form[item]
-        doc['user_id'] = flask_login.current_user.username
-        db.restaurantData.insert_one(doc)
-        return redirect("/home")
-    return render_template("add.html")
 
 @app.route("/household/<household_id>")
 @flask_login.login_required
@@ -358,7 +316,8 @@ def create_request(household_id, pantry_id):
             'requester_name': requester_name,
             'item_name': item_name,
             'owner_id': owner_id,
-            'owner_name': owner_name
+            'owner_name': owner_name,
+            "status": "pending"
         })
 
         request_id = request_doc.inserted_id
@@ -366,6 +325,22 @@ def create_request(household_id, pantry_id):
         db.pantryData.update_one({"_id": pantry_id}, {"$push": {"requests": request_id}})
 
         return redirect(url_for('household', household_id=household_id))
+    
+@app.route("/respond-request/<household_id>/<request_id>", methods=["POST"])
+@flask_login.login_required
+def respond_request(household_id, request_id):
+    action = request.form["action"]
+    if action not in ["accept", "deny"]:
+        flash("Invalid action", "danger")
+        return redirect(url_for("requests", household_id=household_id))
+
+    status = "accepted" if action == "accept" else "denied"
+    db.requestData.update_one(
+        {"_id": ObjectId(request_id)},
+        {"$set": {"status": status}}
+    )
+    flash(f"Request {status}.", "success")
+    return redirect(url_for("requests", household_id=household_id))
         
 @app.route("/grocery-purchase/<household_id>/<grocery_id>",methods=["POST"])
 @flask_login.login_required

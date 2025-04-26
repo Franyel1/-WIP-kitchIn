@@ -60,11 +60,7 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/web-app:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/web-app:latest
-      - name: Debug print secrets
-        run: |
-          echo "MONGO_URI: ${{ secrets.MONGO_URI }}"
-          echo "MONGO_DBNAME: ${{ secrets.MONGO_DBNAME }}"
-
+    
       - name: Deploy to DigitalOcean
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -77,6 +73,6 @@ jobs:
             docker rm web-app || true
             docker run -d --name web-app -p 80:5000 \
               -v webapp_static:/app/static \
-              -e MONGO_URI=${{ secrets.MONGO_URI }} \
-              -e MONGO_DBNAME=${{ secrets.MONGO_DBNAME }} \
+              -e MONGO_URI="${{ secrets.MONGO_URI }}" \
+              -e MONGO_DBNAME="${{ secrets.MONGO_DBNAME }}" \
               ${{ secrets.DOCKER_USERNAME }}/web-app:latest

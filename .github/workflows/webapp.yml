@@ -73,5 +73,6 @@ jobs:
             docker rm web-app || true
             docker run -d --name web-app -p 80:5000 \
               -v webapp_static:/app/static \
-              -e MONGO_URI=mongodb://localhost:27017/ \
+              -e MONGO_URI=${{ secrets.MONGO_URI }} \
+              -e MONGO_DBNAME=${{ secrets.MONGO_DBNAME }} \
               ${{ secrets.DOCKER_USERNAME }}/web-app:latest

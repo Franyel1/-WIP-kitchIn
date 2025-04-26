@@ -23,6 +23,8 @@ app.config.from_mapping(config)
 client = pymongo.MongoClient(os.getenv("MONGO_URI"))
 db = client[os.getenv("MONGO_DBNAME")]
 
+app.db = db
+
 # Initialize Flask-Login
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)

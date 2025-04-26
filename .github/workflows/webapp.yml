@@ -72,6 +72,8 @@ jobs:
             docker stop web-app || true
             docker rm web-app || true
             docker run -d --name web-app -p 80:5000 \
-              -v webapp_static:/app/static \
-              -e MONGO_URI=mongodb://localhost:27017/ \
-              ${{ secrets.DOCKER_USERNAME }}/web-app:latest
+            -v webapp_static:/app/static \
+            -e MONGO_URI=mongodb://localhost:27017/ \
+            -e MONGO_DBNAME=test_webapp_db \
+            ${{ secrets.DOCKER_USERNAME }}/web-app:latest
+

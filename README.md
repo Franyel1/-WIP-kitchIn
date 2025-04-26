@@ -1,6 +1,6 @@
 # Final Project
 
-![CI/CD Build Status](https://github.com/software-students-spring2025/5-final-stacked/actions/workflows/web-app-ci-cd.yml/badge.svg)
+![CI/CD Build Status](https://github.com/software-students-spring2025/5-final-stacked/actions/workflows/webapp.yml/badge.svg)
 
 
 

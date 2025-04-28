@@ -86,22 +86,30 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    error = None 
     if request.method == "POST":
         email = request.form["email"]
         username = request.form["username"]
         password = request.form["password"]
+        confirm_password = request.form["confirmPassword"]
 
-        if User.create_user(email, username, password):
-            flash("Registration successful! Please log in.", "success")
-            return redirect(url_for("login"))
+        if password != confirm_password:
+            error = "Passwords do not match."
+        elif User.find_by_email(email):
+            error = "Email is already registered."
+        elif User.find_by_username(username):
+            error = "Username is already taken."
         else:
-            flash("Username already exists. Please try again.", "danger")
+            if User.create_user(email, username, password):
+                return redirect(url_for("login"))
+            else:
+                error = "An unexpected error occurred during registration."
 
-    return render_template("register.html")
-
+    return render_template("register.html", error=error)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    error = None  
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
@@ -109,21 +117,27 @@ def login():
 
         if user and check_password_hash(user.password, password):  
             flask_login.login_user(user)
-            flash("Login successful!", "success")
             return redirect(url_for("home"))
+        else:
+            error = "Invalid email or password."
 
-        flash("Invalid credentials", "danger")
-
-    return render_template("login.html")
+    return render_template("login.html", error=error)
 
 
 @app.route("/home")
 @flask_login.login_required
 def home():
+    error_code = request.args.get('error')  
+    if error_code == '999':
+        error = "You are already a member of this household."
+    elif error_code == '111':
+        error = "Invalid household code. Please try again."
+    else: 
+        error = None
     user = db.loginInfo.find_one({"_id": ObjectId(current_user.id)})
     names = user.get("households", [])
     docs = db.householdData.find({"name": {"$in": names}})
-    return render_template("home.html", user = user, households = docs)
+    return render_template("home.html", user=user, households=docs, error=error)
 
 @app.route("/create-household", methods = ['POST'])
 @flask_login.login_required
@@ -155,13 +169,11 @@ def leave_household(household_id):
     user = db.loginInfo.find_one({"_id": ObjectId(current_user.id)})
     username = user["username"]
 
-    # Remove user from the household's member list
     db.householdData.update_one(
         {"_id": household_id},
         {"$pull": {"members": username}}
     )
 
-    # Remove the household name from user's household list
     household = db.householdData.find_one({"_id": household_id})
     if household:
         db.loginInfo.update_one(
@@ -175,36 +187,36 @@ def generate_code():
     letters = 'QWERTYUIOPASDFGHJKLZXCVBNM1234567890'
     return ''.join(random.choices(letters,k=4))
     
-@app.route("/join-household", methods=['POST'])
+@app.route("/join-household", methods=["GET", "POST"])
 @flask_login.login_required
 def join_household():
+    error = None
     if request.method == "POST":
-        code = request.form['code']
-    household = db.householdData.find_one({'code':code})
-    username = flask_login.current_user.username
-    user = User.find_by_username(username)
-    if household:
-        if username not in household.get('members', []):
-            db.householdData.update_one(
-                {"_id":household["_id"]},
-                {"$push":{"members":username}}
-            )
-            db.loginInfo.update_one(
-                {"_id": ObjectId(user.id)},
-                {"$push": {"households": household["name"]}}
-            )
-        else:
-            print('error')
-    else:
-        print('error')
-    return redirect("/home")
+        code = request.form['code'].strip().upper()
+        household = db.householdData.find_one({'code': code})
+        username = flask_login.current_user.username
+        user = User.find_by_username(username)
 
+        if household:
+            if username not in household.get('members', []):
+                db.householdData.update_one(
+                    {"_id": household["_id"]},
+                    {"$push": {"members": username}}
+                )
+                db.loginInfo.update_one(
+                    {"_id": ObjectId(user.id)},
+                    {"$push": {"households": household["name"]}}
+                )
+                return redirect(url_for("home"))
+            else:
+                return redirect(url_for("home", error='999'))
+        else:
+            return redirect(url_for("home", error='111'))
 
 @app.route("/logout")
 @flask_login.login_required
 def logout():
     flask_login.logout_user()
-    flash("Logged out successfully", "success")
     return redirect(url_for("login"))
 
 @app.route("/household/<household_id>")
@@ -360,22 +372,18 @@ def delete_request(household_id, request_id):
         flash("Request not found.", "danger")
         return redirect(url_for("requests", household_id=household_id))
 
-    # Remove from household's list
     db.householdData.update_one(
         {"_id": ObjectId(household_id)},
         {"$pull": {"requests": ObjectId(request_id)}}
     )
 
-    # Remove from pantry's request list
     db.pantryData.update_one(
         {"_id": request_obj["item_id"]},
         {"$pull": {"requests": ObjectId(request_id)}}
     )
 
-    # Finally delete the request
     db.requestData.delete_one({"_id": ObjectId(request_id)})
 
-    flash("Request deleted successfully.", "success")
     return redirect(url_for("requests", household_id=household_id))
 
 @app.route("/respond-request/<household_id>/<request_id>", methods=["POST"])
@@ -413,9 +421,6 @@ def grocery_purchase(household_id, grocery_id):
         pantry_item = db.pantryData.insert_one({'name':name,'quantity':quantity,'exp_date':exp_date,'owner_id':requester_id, 'owner':requester, 'requests':[]})
         db.householdData.update_one({"_id":house_id}, {'$push':{"pantry":pantry_item.inserted_id}})
         return redirect(url_for('household',household_id=household_id))
-
-
-#remove user from household function needed
 
 # Run the app
 if __name__ == "__main__":

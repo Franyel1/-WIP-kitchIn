@@ -179,10 +179,10 @@
                     <label for="editQuantity">Quantity:</label>
                     <input type="text" name="quantity" id="editQuantity" maxlength="15"><br><br>
                   
-                    <label for="editExpiry">Expiration Date:</label>
+                    <label for="editExpiry">Expiration <br>Date:</label>
                     <input type="text" name="expiration" id="editExpiry"maxlength="12"><br>
                   </div>
-                <button class="button"type="submit">Save</button>
+                <button class="button"type="submit" id="saveButton">Save</button>
                 <button class="button"type="button"id="cancelButton" onclick="closePantryEditBox()">Cancel</button>
             </form>         
         </div>
@@ -199,7 +199,7 @@
                     <input type="text" name="note" id="groceryEditNote"maxlength="50"><br><br>
                 
                 </div>
-                <button class="button" type="submit">Save</button>
+                <button class="button" type="submit"id="saveButton">Save</button>
                 <button class="button" id="cancelButton" type="button" onclick="closeGroceryEditBox()">Cancel</button>
             </form>
         </div>
@@ -216,7 +216,7 @@
                 <input type="text" name="note" id="addGroceryNote"maxlength="50"><br><br>
 
               </div>
-              <button class="button" type="submit">Add</button>
+              <button class="button" type="submit"id="saveButton">Add</button>
               <button class="button" type="button"id="cancelButton"  onclick="closeAddGrocery()">Cancel</button>
             </form>
           </div>
@@ -230,10 +230,10 @@
                 <label for="addPantryQuantity">Quantity:</label>
                 <input type="text" name="quantity" id="addPantryQuantity" maxlength="15"><br><br>
           
-                <label for="addPantryExpiry">Expiration Date:</label>
+                <label for="addPantryExpiry">Expiration <br>Date:</label>
                 <input type="text" name="expiration" id="addPantryExpiry"maxlength="12"><br>
               </div>
-              <button class="button" type="submit">Add</button>
+              <button class="button" type="submit" id="saveButton">Add</button>
               <button class="button" type="button"id="cancelButton"  onclick="closeAddPantry()">Cancel</button>
             </form>
           </div>

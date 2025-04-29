@@ -4,9 +4,7 @@
     /* border: solid; */
     font-family: Lexend;
 }
-body{
-    padding-bottom: 100px;
-}
+
 
 :root {
     --primary-color: #628a56;
@@ -37,23 +35,21 @@ body{
     flex-direction: column;
     background-color: var(--primary-color);
     width: fit-content;
-    height: 400px;
+    height: fit-content;
     padding: 25px;
+    padding-bottom: 35px;
     border-radius:  20px;
     border: none;
-    
-}
-#regSection{
-    height: 600px;
 }
 
 #loginScreen,
 #registerScreen {
     background-color: var(--background-color);
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     height: 100vh;
+    padding-top: 150px;
 }
 
 #loginForm,
@@ -68,7 +64,7 @@ body{
 
 h1 {
     text-align: center;
-    color: var(--text-color1);
+    color: var(--text-color2);
     font-weight: 900;
     align-self: center;
     margin: 15px;
@@ -81,8 +77,19 @@ h1 {
     font-weight: 700;
     color: var(--text-color2);
     margin-bottom: 5px;
-    margin-top: 15px;;
+    margin-top: 15px;
     font-size: 18px;
+}
+.logError{
+    background-color: var(--red);
+    color: var(--text-color2);
+    padding: 10px;
+    align-self: center;
+    border: 1px solid var(--text-color2);
+    width: 60%;
+    text-align: center;
+    font-weight: bolder;
+    margin: 10px;
 }
 
 #loginForm div {
@@ -111,6 +118,11 @@ h1 {
     font-size: 16px;
     font-weight: 900;
     cursor: pointer;
+}
+#logButton:hover {
+    color: var(--button-color);
+    background-color: var(--button-text-color);
+    transition: .3s ease-in;
 }
 
 #noAccount {
@@ -152,7 +164,10 @@ header {
     margin-left: 10%;
     color: var(--button-text-color);
     font-weight: 1000;
-    font-size: 0.85em;
+}
+
+.button{
+    font-size: 15px;
 }
 
 #logout:hover, #requests:hover {
@@ -174,7 +189,7 @@ a:visited {
     text-decoration: none;
 }
 
- 
+  h3
 button {
     padding: 10px 20px;
     font-size: 1rem;
@@ -203,10 +218,10 @@ ul {
     background-color: var(--primary-color); 
     color: white; 
     border: none; 
-    padding: 10px 15px; 
+    padding: 8px; 
     border-radius: 5px; 
     cursor: pointer;
-    font-size: 20px;
+
     font-weight: 500;
 }
 
@@ -226,7 +241,6 @@ ul {
     background-color: var(--top-bar-color);
     color: var(--logo-color);
     font-weight: 900;
-    font-size: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -260,7 +274,8 @@ ul {
 }
 
 #logo{
-    color: var(--logo-color)
+    color: var(--logo-color);
+    font-size: 20px;
 }
 #logo:hover{
     transition: 0.3s ease;
@@ -275,6 +290,7 @@ ul {
 #panels{
     display: flex;
     justify-content: space-between;
+    margin-bottom: 100px;
 }
 
 #grocery,#pantry{
@@ -661,14 +677,21 @@ input{
     padding: 0 50px;
     padding-right: 80px;
     box-sizing: border-box;
+
+}
+#banner h3{
+    font-size: 3.5vw;
+    margin-left: -10px;
 }
 
 #banner button {
-    padding-block:2px;
     background-color: rgba(255, 255, 255, 0.5);
     color: var(--top-bar-color);
     font-weight: 900;
     font-size: 35px;
+    line-height: 35px;
+    text-align: center;
+    padding-top: 5px;
 }
 
 #banner button:hover {
@@ -687,17 +710,51 @@ input{
     font-size: x-large;
     display: block;
     border-radius: 5px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
     width: 30%;
     max-width: 400px;
     box-sizing: border-box;
     border: 0px;
     text-align: center;
+    font-size: 2vw;
+}
+#homeSec{
+    width: 100%;
+}
+#joinButton{
+    font-size: 2vw;
 }
 
 #joinForm{
     display: flex;
-    margin-left: 35%; 
-    margin-bottom: 20px;
+    flex-direction: row;
+    justify-content: center;
+    width: 100%;
+
+}
+
+#homeError{
+    width: fit-content;
+    min-width: 100px;
+
+}
+#joinEr{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 20px;
+
+}
+#joinForm button{
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+#joinForm button:hover{
+    background-color: var(--text-color1);
+    color: var(--primary-color);
+    transition: 0.3s ease;
 }
 
 .join:focus {
@@ -780,13 +837,16 @@ input{
     display: flex;
     flex-direction: column;
     width: fit-content;
-    height: 400px;
+    height: fit-content;
     padding: 25px;
     border-radius:  20px;
 
     /* animation */
     transform: scale(0.8);
     animation: fadeInUp 0.5s ease-out forwards;
+}
+.popup-box h1{
+    margin-bottom: 20px;
 }
 
 .form-container {
@@ -1076,7 +1136,7 @@ input{
 .optionsMenu {
     position: relative;
     display: inline-block;
-    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .dropdown {
@@ -1119,13 +1179,46 @@ input{
     font-weight: bold;
     cursor: pointer;
 }
+.optionsMenu {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.householdContainer {
+    position: relative;
+}
+
+.householdOptions {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.join {
+    text-transform: uppercase;
+}
+
+.optionsButton {
+    background: none;
+    border: none;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--primary-color);
+    margin-right: 20px;
+}
+.optionsButton:hover{
+    color: var(--logo-color2);
+    transition: 0.3s ease;
+}
 
 .dropdown {
     display: none;
     position: absolute;
     right: 0;
-    top: 30px;
-    background-color: white;
+    top: 30px; /* position below the button */
+    background-color: var(--text-color2);
     border: 1px solid #ccc;
     z-index: 1000;
     border-radius: 6px;

@@ -8,6 +8,7 @@
     <title>kitchIn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="../static/icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
 </head>
 
@@ -17,7 +18,11 @@
     </div>
     <div id="regSection">
         <h1>Get Started</h1>
-
+        {%if error != None%}
+        <div class="logError">
+            {{error}}
+        </div>
+        {%endif%}
         <form id="regForm" action="register" method="POST">
             <div>
                 <div id="username">Email:</div>
@@ -25,11 +30,11 @@
             </div>
             <div>
                 <div id="username">Nickname:</div>
-                <input class="box" type="text" name="username" value="" minlength="2" required>
+                <input class="box" type="text" autocomplete="off"name="username" value=""  minlength="2" required>
             </div>
             <div>
                 <div id="password">Password:</div>
-                <input class="box" type="password" name="password" value="" minlength="3" maxlength="15" required>
+                <input class="box" autocomplete="off" type="password" name="password" value=""  minlength="3" maxlength="15" required> 
             </div>
             <div>
                 <div id="password">Confirm Password:</div>
@@ -44,9 +49,24 @@
             <a href="/login">Log in</a>
         </div>
     </div>
-    <div>
-        <h3>{{ error }}</h3>
-    </div>
 </body>
+<script>
+function adjustScale() {
+    const width = window.innerWidth;
+    const body = document.getElementById('regSection');
+
+    const baseWidth = 1200;
+    let scale = width*1.4 / baseWidth;
+
+    if (scale < 0.5) scale = 0.5;
+    if (scale > 1) scale = 1;
+
+    body.style.transform = `scale(${scale})`;
+    body.style.transformOrigin = "top center";
+}
+
+window.addEventListener('load', adjustScale);
+window.addEventListener('resize', adjustScale);
+</script>
 
 </html>

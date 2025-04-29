@@ -8,6 +8,7 @@
     <title>kitchIn</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/png" href="../static/icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
 </head>
 
@@ -17,6 +18,12 @@
     </div>
     <div id="loginSection">
         <h1>Login</h1>
+
+        {%if error != None%}
+        <div class="logError">
+            {{error}}
+        </div>
+        {%endif%}
 
         <form id="loginForm" action="{{ url_for('login') }}" method="POST">
             <div>
@@ -37,9 +44,24 @@
             <a href="/register">Register Now!</a>
         </div>
     </div>
-    <div>
-        <h3>{{ error }}</h3>
-    </div>
 </body>
+<script>
+    function adjustScale() {
+        const width = window.innerWidth;
+        const body = document.getElementById('loginSection');
+    
+        const baseWidth = 1200;
+        let scale = width*1.4 / baseWidth;
+    
+        if (scale < 0.5) scale = 0.5;
+        if (scale > 1) scale = 1;
+    
+        body.style.transform = `scale(${scale})`;
+        body.style.transformOrigin = "top center";
+    }
+    
+    window.addEventListener('load', adjustScale);
+    window.addEventListener('resize', adjustScale);
+</script>
 
 </html>

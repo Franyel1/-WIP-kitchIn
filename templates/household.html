@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Jersey+10&family=Jersey+15&family=Josefin+Slab:ital,wght@0,100..700;1,100..700&family=Kristi&family=Lexend:wght@100..900&family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/styles.css">
+    <link rel="icon" type="image/png" href="../static/icon.png">
     <title>Household</title>
 </head>
 <body id="householdScreen">
@@ -461,6 +462,29 @@ document.querySelectorAll('.pantryRequest').forEach(btn => {
   });
 });
 
+function adjustScale() {
+    const width = window.innerWidth;
+    const body = document.getElementById('panels');
+    const body2 = document.getElementById('back');
+
+
+    const baseWidth = 1100;
+    let scale = width / baseWidth;
+
+    if (scale > 1) scale = 1;
+    if (scale < 0.2) scale = 0.2;
+    scale = 0.6 * scale;
+
+    body.style.transform = `scale(${scale})`;
+    body.style.transformOrigin = "top center";
+
+}
+
+window.addEventListener('load', adjustScale);
+window.addEventListener('resize', adjustScale);
+
+
+  
 
 
 </script>

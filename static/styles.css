@@ -453,6 +453,13 @@ ul {
     width: 350px;
     height: 370px;
 }
+#groceryConfirmBox{
+    width: 400px !important;
+    height: 430px !important;
+}
+#confirmBuyForm{
+    width: 100% !important;
+}
 
 #back {
     display: none;
@@ -646,10 +653,14 @@ div input{
 input{
     padding: 5px;
 }
-#cancelButton{
+#cancelButton, #saveButton{
     height: 50px;
     margin-top: 10px;
 }
+#saveButton{
+    margin-left: 30px;
+}
+
 
 /*////////////////////////////////////////////////////////////////////////////////////////////*/
 
@@ -1112,6 +1123,11 @@ input{
     }
 
 }
+#back form{
+    width: 60%;
+}
+
+
 
 #panels, #householdName{
     transform: scale(0.7);

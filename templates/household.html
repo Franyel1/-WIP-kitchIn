@@ -461,6 +461,29 @@ document.querySelectorAll('.pantryRequest').forEach(btn => {
   });
 });
 
+function adjustScale() {
+    const width = window.innerWidth;
+    const body = document.getElementById('panels');
+    const body2 = document.getElementById('back');
+
+
+    const baseWidth = 1100;
+    let scale = width / baseWidth;
+
+    if (scale > 1) scale = 1;
+    if (scale < 0.2) scale = 0.2;
+    scale = 0.6 * scale;
+
+    body.style.transform = `scale(${scale})`;
+    body.style.transformOrigin = "top center";
+
+}
+
+window.addEventListener('load', adjustScale);
+window.addEventListener('resize', adjustScale);
+
+
+  
 
 
 </script>

@@ -18,24 +18,30 @@
             Logout
         </a>
     </div>
-    <!-- todo: not sure where to put PIN button -->
-    <form id="joinForm" action="/join-household" method="POST">
-        <input class="join" type="text" placeholder="Enter Code" name="code"></input>
-        <button class="button">Join</button>
-    </form>
+    <div id="joinEr">
+        <form id="joinForm" action="/join-household" method="POST">
+            
+            <input class="join" type="text" placeholder="Enter Code" name="code"></input>
+            <button id="joinButton" class="button">Join</button>
+        
+        </form>
+        {%if error != None%}
+        <div class="logError"id="homeError">
+            {{error}}
+        </div>
+        {%endif%}
+    </div>
 
 
     <div id="banner">
         <h3>Your Households</h3>
 
-        <!-- todo: add url for create household -->
         <button class="button" id="create" onclick="togglePopup()">
             <span class="add">+</span>
         </button>
 
     </div>
-    <!-- todo: implement mongoDB integration to map each household name to container & link 
-                if no households, display italics no households yet-->
+
     {% for household in households %}
 
     <div class="householdContainer">
@@ -58,57 +64,14 @@
 
 
     {% endfor %}
-    <div>
-        <h3>{{ error }}</h3>
-    </div>
     <div id="popupOverlay" class="overlay-container">
         <div class="popup-box">
             <h1> Make Household</h1>
             <form method="POST" action="/create-household" class="form-container">
                 <label class="form-label" for="name">
-                Household Name:
-            </label>
+                    Household Name:
+                </label>
                 <input class="form-input" type="text" placeholder="Enter Name" id="name" name="name" required>
-
-                <label class="form-label" for="name">
-                Color Picker:
-            </label>
-
-                <div class="color-picker">
-                    <div class="color-picker-button">
-
-                        <label class="color-picker-circle" style="background-color: rgba(234,153,153,0.7);">
-                        <input type="radio" name="color" value="rgba(234,153,153,0.7)">
-                        <span class="checkmark">✓</span>
-                    </label>
-
-                        <label class="color-picker-circle" style="background-color: rgba(249,203,156,0.7);">
-                        <input type="radio" name="color" value="rgba(249,203,156,0.7)">
-                        <span class="checkmark">✓</span>
-                    </label>
-
-                        <label class="color-picker-circle" style="background-color: rgba(255,217,102,0.7);">
-                        <input type="radio" name="color" value="rgba(255,217,102,0.7)">
-                        <span class="checkmark">✓</span>
-                    </label>
-
-                        <label class="color-picker-circle" style="background-color: rgba(182,215,168,0.7);">
-                        <input type="radio" name="color" value="rgba(255,217,102,0.7)">
-                        <span class="checkmark">✓</span>
-                    </label>
-
-                        <label class="color-picker-circle" style="background-color: rgba(164,194,244,0.7);">
-                        <input type="radio" name="color" value="rgba(164,194,244,0.7)">
-                        <span class="checkmark">✓</span>
-                    </label>
-
-                        <label class="color-picker-circle" style="background-color: rgba(180,167,214,0.7);">
-                        <input type="radio" name="color" value="rgba(180,167,214,0.7)">
-                        <span class="checkmark">✓</span>
-                    </label>
-                    </div>
-                </div>
-
 
                 <button class="btn-submit" type="submit">
                 Submit
@@ -125,7 +88,7 @@
         <div class="popup-box">
             <h1>Household Members</h1>
             <ul id="membersList">
-                <!-- Filled by JS -->
+                
             </ul>
             <button class="btn-close-popup" onclick="toggleMembersPopup()">Close</button>
         </div>
@@ -178,7 +141,8 @@
 
             toggleMembersPopup();
         }
+        
     </script>
-
+    
 
 </body>

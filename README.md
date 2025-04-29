@@ -1,4 +1,4 @@
-# Final Project
+# Kitchiin
 
 ![CI/CD Build Status](https://github.com/software-students-spring2025/5-final-stacked/actions/workflows/webapp.yml/badge.svg)
 

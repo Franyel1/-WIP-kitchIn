@@ -37,9 +37,11 @@
             <a href="/register">Register Now!</a>
         </div>
     </div>
+    {% if error %}
     <div>
         <h3>{{ error }}</h3>
     </div>
+    {% endif %}
 </body>
 
 </html>

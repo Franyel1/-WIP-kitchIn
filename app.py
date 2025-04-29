@@ -230,6 +230,10 @@ def household(household_id):
     pantry_list = list(db.pantryData.find({"_id":{"$in":pantry_ids}}))
     request_ids = doc.get("requests",[])
     request_list = list(db.requestData.find({"_id":{"$in":request_ids}}))
+    for item in pantry_list:
+        reqs = list(db.requestData.find({"_id": {"$in": item.get("requests", [])}}))
+        item["requests"] = reqs
+
     username = flask_login.current_user.username
     user = User.find_by_username(username)
     return render_template("household.html",household = doc, groceryList = grocery_list, pantryList = pantry_list, current_user_id = user.id, requestList = request_list)    

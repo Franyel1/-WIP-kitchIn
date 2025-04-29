@@ -87,8 +87,9 @@
                 {% if item.owner %}
                   <div class="pantryBuyer">
                     Owner: {{ item.owner }}
-                    {% if item.owner_id == current_user_id and item.requests|length > 0 %}
-                      <span class="itemRequestBadge"><span>📥</span> {{ item.requests|length }}</span>
+                    {% set pending_requests = item.requests | selectattr('status', 'equalto', 'pending') | list %}
+                    {% if item.owner_id == current_user_id and pending_requests | length > 0 %}
+                      <span class="itemRequestBadge"><span>📥</span> {{ pending_requests | length }}</span>
                     {% endif %}
                   </div>
                   
@@ -472,8 +473,8 @@ function adjustScale() {
     let scale = width / baseWidth;
 
     if (scale > 1) scale = 1;
-    if (scale < 0.2) scale = 0.2;
-    scale = 0.6 * scale;
+    scale = 0.75 * scale;
+    if (scale < 0.3) scale = 0.3;
 
     body.style.transform = `scale(${scale})`;
     body.style.transformOrigin = "top center";

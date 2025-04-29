@@ -105,7 +105,7 @@ def register():
             else:
                 error = "An unexpected error occurred during registration."
 
-    return render_template("register.html")
+    return render_template("register.html", error=error)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -121,7 +121,7 @@ def login():
         else:
             error = "Invalid email or password."
 
-    return render_template("login.html")
+    return render_template("login.html", error=error)
 
 
 @app.route("/home")
@@ -431,4 +431,3 @@ if __name__ == "__main__":
 
 
 ###############################HOUSEHOLD###########################
-
